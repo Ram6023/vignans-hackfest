@@ -121,7 +121,7 @@ Our design philosophy is **"Bold, Clean, & Futuristic"**.
 
 <br/><br/>
 
-**© 2026 Vignan University**  
+**© 2026 VITS**  
 *Built with code, caffeine, and chaos.* ☕
 
 </div>
