@@ -3,7 +3,7 @@
 # 🚀 VIGNAN'S HACKFEST 2026 
 ## *Innovation Meets Execution*
 
-![Hackfest Banner](https://capsule-render.vercel.app/api?type=waving&color=7c3aed&height=300&section=header&text=Vignan's%20Hackfest%202026&fontSize=90&animation=fadeIn&fontAlignY=38&desc=Build%20·%20Innovate%20·%20Transform&descAlignY=51&descAlign=50)
+![Hackfest Banner](https://capsule-render.vercel.app/api?type=waving&color=7c3aed&height=300&section=header&text=Vignan's%20Hackfest%202026&fontSize=60&animation=fadeIn&fontAlignY=38&desc=Build%20·%20Innovate%20·%20Transform&descAlignY=55&descAlign=50)
 
 <a href="">
   <img src="https://img.shields.io/badge/Status-In%20Development-orange?style=for-the-badge" alt="Status" />
