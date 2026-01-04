@@ -111,6 +111,14 @@ Our design philosophy is **"Bold, Clean, & Futuristic"**.
   <img src="https://contrib.rocks/image?repo=Ram6023/vignans-hackfest" />
 </a>
 
+<br/>
+
+<a href="https://github.com/theshubhamgundu">
+  <img src="https://github.com/theshubhamgundu.png?size=64" width="64" height="64" style="border-radius: 50%;" alt="theshubhamgundu" />
+</a>
+<br/>
+<sub><b>Shubham Gundu</b></sub>
+
 <br/><br/>
 
 **© 2026 Vignan University**  
