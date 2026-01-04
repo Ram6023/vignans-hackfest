@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Team, Volunteer, Announcement, HackathonConfig } from '../types';
+import { Team, Volunteer, HackathonConfig } from '../types';
 import { dbService } from '../services/mockDb';
+import { wsService } from '../services/websocket';
+import { useRealtimeAnnouncements } from '../hooks/useRealtime';
 import { Timer } from '../components/Timer';
 import { AnnouncementFeed } from '../components/AnnouncementFeed';
-import { Wifi, MapPin, User as UserIcon, Upload, CheckCircle, ExternalLink, Eye, EyeOff, Loader2, Code2, Copy, Check, Phone, Mail, Sparkles, AlertCircle, Clock } from 'lucide-react';
+import { Schedule } from '../components/Schedule';
+import { Wifi, MapPin, User as UserIcon, Upload, CheckCircle, ExternalLink, Eye, EyeOff, Loader2, Code2, Copy, Check, Phone, Sparkles, AlertCircle, Clock } from 'lucide-react';
 
 interface TeamDashboardProps {
   teamId: string;
@@ -12,7 +15,6 @@ interface TeamDashboardProps {
 export const TeamDashboard: React.FC<TeamDashboardProps> = ({ teamId }) => {
   const [team, setTeam] = useState<Team | null>(null);
   const [volunteer, setVolunteer] = useState<Volunteer | null>(null);
-  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [config, setConfig] = useState<HackathonConfig | null>(null);
   const [showWifi, setShowWifi] = useState(false);
   const [submissionLink, setSubmissionLink] = useState('');
@@ -20,6 +22,9 @@ export const TeamDashboard: React.FC<TeamDashboardProps> = ({ teamId }) => {
   const [loading, setLoading] = useState(true);
   const [copiedField, setCopiedField] = useState<'ssid' | 'pass' | null>(null);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
+
+  // Use real-time announcements
+  const { announcements } = useRealtimeAnnouncements();
 
   const fetchData = async () => {
     try {
@@ -32,7 +37,6 @@ export const TeamDashboard: React.FC<TeamDashboardProps> = ({ teamId }) => {
           setVolunteer(v || null);
         }
       }
-      setAnnouncements(await dbService.getAnnouncements());
       setConfig(await dbService.getConfig());
     } catch (e) {
       console.error(e);
@@ -125,8 +129,8 @@ export const TeamDashboard: React.FC<TeamDashboardProps> = ({ teamId }) => {
                 <p className="text-slate-500 font-medium text-sm">{team.email}</p>
               </div>
               <div className={`px-4 py-1.5 rounded-full text-sm font-bold shadow-sm flex items-center space-x-1.5 ${team.isCheckedIn
-                  ? 'bg-gradient-to-r from-emerald-100 to-teal-100 text-emerald-700 border border-emerald-200'
-                  : 'bg-gradient-to-r from-amber-100 to-orange-100 text-amber-700 border border-amber-200'
+                ? 'bg-gradient-to-r from-emerald-100 to-teal-100 text-emerald-700 border border-emerald-200'
+                : 'bg-gradient-to-r from-amber-100 to-orange-100 text-amber-700 border border-amber-200'
                 }`}>
                 <span className={`w-2 h-2 rounded-full ${team.isCheckedIn ? 'bg-emerald-500' : 'bg-amber-500'} animate-pulse`}></span>
                 <span>{team.isCheckedIn ? 'Checked In' : 'Pending'}</span>
@@ -382,6 +386,11 @@ export const TeamDashboard: React.FC<TeamDashboardProps> = ({ teamId }) => {
             </form>
           </div>
         </div>
+      </div>
+
+      {/* Schedule Section */}
+      <div className="mt-6">
+        <Schedule compact />
       </div>
     </div>
   );

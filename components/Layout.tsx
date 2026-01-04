@@ -1,6 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { User } from '../types';
-import { LogOut, Rocket, Zap, Menu, X, Bell, Settings, ChevronDown, User as UserIcon, Shield, Users } from 'lucide-react';
+import { LogOut, Rocket, Zap, Menu, X, Settings, ChevronDown, User as UserIcon, Shield, Users, Wifi, WifiOff } from 'lucide-react';
+import { NotificationCenter } from './NotificationCenter';
+import { useConnectionStatus } from '../hooks/useRealtime';
+
+// Connection Status Indicator Component
+const ConnectionStatus: React.FC = () => {
+  const { isOnline } = useConnectionStatus();
+
+  return (
+    <div className={`flex items-center px-3 py-2 rounded-xl text-xs font-semibold transition-all ${isOnline
+        ? 'bg-emerald-100 text-emerald-700'
+        : 'bg-rose-100 text-rose-700'
+      }`}>
+      {isOnline ? (
+        <>
+          <Wifi className="w-3.5 h-3.5 mr-1.5" />
+          <span>Live</span>
+        </>
+      ) : (
+        <>
+          <WifiOff className="w-3.5 h-3.5 mr-1.5" />
+          <span>Offline</span>
+        </>
+      )}
+    </div>
+  );
+};
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -13,7 +39,6 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout, title 
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdown, setProfileDropdown] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -41,7 +66,6 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout, title 
     }
   };
 
-  const RoleIcon = user ? getRoleIcon(user.role) : UserIcon;
   const roleColors = user ? getRoleColor(user.role) : getRoleColor('default');
 
   return (
@@ -50,8 +74,8 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout, title 
       <div className="sticky top-0 z-50 px-4 sm:px-6 lg:px-8 pt-4 transition-all duration-300">
         <header
           className={`glass-panel rounded-2xl transition-all duration-300 max-w-7xl mx-auto ${scrolled
-              ? 'shadow-xl shadow-slate-200/40 border-white/80'
-              : 'shadow-lg shadow-slate-200/20'
+            ? 'shadow-xl shadow-slate-200/40 border-white/80'
+            : 'shadow-lg shadow-slate-200/20'
             }`}
         >
           <div className="px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
@@ -82,53 +106,11 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout, title 
             {/* Desktop Navigation */}
             {user && (
               <div className="hidden sm:flex items-center space-x-3">
-                {/* Notification Bell */}
-                <div className="relative">
-                  <button
-                    onClick={() => setShowNotifications(!showNotifications)}
-                    className="relative p-2.5 rounded-xl bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-700 transition-all"
-                  >
-                    <Bell className="w-5 h-5" />
-                    <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white animate-pulse"></span>
-                  </button>
+                {/* Connection Status */}
+                <ConnectionStatus />
 
-                  {/* Notification Dropdown */}
-                  {showNotifications && (
-                    <>
-                      <div className="fixed inset-0 z-10" onClick={() => setShowNotifications(false)}></div>
-                      <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden z-20 animate-[scaleIn_0.2s_ease-out]">
-                        <div className="p-4 border-b border-slate-100 bg-slate-50/50">
-                          <h3 className="font-bold text-slate-900">Notifications</h3>
-                          <p className="text-xs text-slate-500">Stay updated with the latest</p>
-                        </div>
-                        <div className="p-2 max-h-64 overflow-y-auto">
-                          <div className="p-3 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer">
-                            <div className="flex items-start space-x-3">
-                              <div className="p-2 rounded-lg bg-violet-100 text-violet-600">
-                                <Bell className="w-4 h-4" />
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-semibold text-slate-900">New announcement</p>
-                                <p className="text-xs text-slate-500 truncate">Check the latest updates from admin</p>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="p-3 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer">
-                            <div className="flex items-start space-x-3">
-                              <div className="p-2 rounded-lg bg-emerald-100 text-emerald-600">
-                                <Zap className="w-4 h-4" />
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-semibold text-slate-900">Hackathon in progress</p>
-                                <p className="text-xs text-slate-500 truncate">Don't forget to submit before deadline!</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </>
-                  )}
-                </div>
+                {/* Real-time Notification Center */}
+                <NotificationCenter />
 
                 {/* Divider */}
                 <div className="h-8 w-px bg-slate-200"></div>

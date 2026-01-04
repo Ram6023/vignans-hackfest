@@ -5,9 +5,10 @@ import { Rocket, Lock, Mail, Loader2, ArrowRight, CheckCircle2, Sparkles, Zap, U
 
 interface LoginPageProps {
   onLogin: (user: User) => void;
+  onShowRegister?: () => void;
 }
 
-export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
+export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onShowRegister }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -263,25 +264,25 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                 onClick={() => handleQuickLogin(account.email, account.password)}
                 disabled={isLoading}
                 className={`group relative p-4 rounded-2xl border-2 transition-all duration-500 hover:scale-[1.03] active:scale-[0.98] disabled:opacity-50 overflow-hidden ${account.color === 'violet'
-                    ? 'border-violet-200 bg-violet-50/50 hover:bg-violet-100/80 hover:border-violet-400'
-                    : account.color === 'emerald'
-                      ? 'border-emerald-200 bg-emerald-50/50 hover:bg-emerald-100/80 hover:border-emerald-400'
-                      : 'border-rose-200 bg-rose-50/50 hover:bg-rose-100/80 hover:border-rose-400'
+                  ? 'border-violet-200 bg-violet-50/50 hover:bg-violet-100/80 hover:border-violet-400'
+                  : account.color === 'emerald'
+                    ? 'border-emerald-200 bg-emerald-50/50 hover:bg-emerald-100/80 hover:border-emerald-400'
+                    : 'border-rose-200 bg-rose-50/50 hover:bg-rose-100/80 hover:border-rose-400'
                   }`}
               >
                 {/* Premium Icon with Glow Effect */}
                 <div className="relative mb-3">
                   <div className={`absolute inset-0 rounded-xl blur-md transition-all duration-500 group-hover:blur-lg ${account.color === 'violet'
-                      ? 'bg-violet-400/40 group-hover:bg-violet-500/60'
-                      : account.color === 'emerald'
-                        ? 'bg-emerald-400/40 group-hover:bg-emerald-500/60'
-                        : 'bg-rose-400/40 group-hover:bg-rose-500/60'
+                    ? 'bg-violet-400/40 group-hover:bg-violet-500/60'
+                    : account.color === 'emerald'
+                      ? 'bg-emerald-400/40 group-hover:bg-emerald-500/60'
+                      : 'bg-rose-400/40 group-hover:bg-rose-500/60'
                     }`}></div>
                   <div className={`relative inline-flex p-2.5 rounded-xl transition-all duration-300 group-hover:scale-110 ${account.color === 'violet'
-                      ? 'bg-gradient-to-br from-violet-500 to-purple-600 text-white shadow-lg shadow-violet-500/30'
-                      : account.color === 'emerald'
-                        ? 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/30'
-                        : 'bg-gradient-to-br from-rose-500 to-pink-600 text-white shadow-lg shadow-rose-500/30'
+                    ? 'bg-gradient-to-br from-violet-500 to-purple-600 text-white shadow-lg shadow-violet-500/30'
+                    : account.color === 'emerald'
+                      ? 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/30'
+                      : 'bg-gradient-to-br from-rose-500 to-pink-600 text-white shadow-lg shadow-rose-500/30'
                     }`}>
                     <account.icon className="w-4 h-4" />
                   </div>

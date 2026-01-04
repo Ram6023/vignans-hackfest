@@ -1,34 +1,70 @@
 import React, { useState, useEffect } from 'react';
-import { User } from './types';
+import { User, Team } from './types';
 import { LoginPage } from './pages/LoginPage';
+import { RegisterPage } from './pages/RegisterPage';
 import { TeamDashboard } from './pages/TeamDashboard';
 import { VolunteerDashboard } from './pages/VolunteerDashboard';
 import { AdminDashboard } from './pages/AdminDashboard';
 import { Layout } from './components/Layout';
+import { wsService } from './services/websocket';
 import { Rocket, Loader2 } from 'lucide-react';
+
+type AppView = 'login' | 'register' | 'dashboard';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [currentView, setCurrentView] = useState<AppView>('login');
 
   useEffect(() => {
-    // Check local storage for session (simulated)
+    // Initialize WebSocket connection
+    wsService.connect().catch(console.error);
+
+    // Check local storage for session
     const storedUser = localStorage.getItem('vignan_user_session');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
+      setCurrentView('dashboard');
     }
+
     // Simulate a brief loading time for smoother UX
     setTimeout(() => setLoading(false), 800);
+
+    // Cleanup on unmount
+    return () => {
+      wsService.disconnect();
+    };
   }, []);
 
   const handleLogin = (loggedInUser: User) => {
     setUser(loggedInUser);
     localStorage.setItem('vignan_user_session', JSON.stringify(loggedInUser));
+    setCurrentView('dashboard');
+  };
+
+  const handleRegister = (team: Team) => {
+    // After registration, automatically log in the new team
+    const newUser: User = {
+      id: team.id,
+      email: team.email,
+      name: team.name,
+      role: 'team'
+    };
+    handleLogin(newUser);
   };
 
   const handleLogout = () => {
     setUser(null);
     localStorage.removeItem('vignan_user_session');
+    setCurrentView('login');
+  };
+
+  const handleShowRegister = () => {
+    setCurrentView('register');
+  };
+
+  const handleBackToLogin = () => {
+    setCurrentView('login');
   };
 
   if (loading) {
@@ -71,10 +107,17 @@ const App: React.FC = () => {
     );
   }
 
-  if (!user) {
-    return <LoginPage onLogin={handleLogin} />;
+  // Show registration page
+  if (currentView === 'register') {
+    return <RegisterPage onRegister={handleRegister} onBack={handleBackToLogin} />;
   }
 
+  // Show login page with option to register
+  if (!user || currentView === 'login') {
+    return <LoginPage onLogin={handleLogin} onShowRegister={handleShowRegister} />;
+  }
+
+  // Show dashboard based on user role
   return (
     <Layout user={user} onLogout={handleLogout}>
       {user.role === 'team' && <TeamDashboard teamId={user.id} />}
