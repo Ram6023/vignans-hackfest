@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Team, Volunteer, HackathonConfig } from '../types';
 import { dbService } from '../services/mockDb';
 import { wsService } from '../services/websocket';
-import { useRealtimeAnnouncements } from '../hooks/useRealtime';
+import { useRealtimeAnnouncements, useRealtimeTeams } from '../hooks/useRealtime';
 import { Timer } from '../components/Timer';
 import { AnnouncementFeed } from '../components/AnnouncementFeed';
 import { Schedule } from '../components/Schedule';
@@ -13,7 +13,9 @@ interface TeamDashboardProps {
 }
 
 export const TeamDashboard: React.FC<TeamDashboardProps> = ({ teamId }) => {
-  const [team, setTeam] = useState<Team | null>(null);
+  const { teams, loading: teamsLoading } = useRealtimeTeams();
+  const { announcements } = useRealtimeAnnouncements();
+
   const [volunteer, setVolunteer] = useState<Volunteer | null>(null);
   const [config, setConfig] = useState<HackathonConfig | null>(null);
   const [showWifi, setShowWifi] = useState(false);
@@ -21,39 +23,41 @@ export const TeamDashboard: React.FC<TeamDashboardProps> = ({ teamId }) => {
   const [gitRepoLink, setGitRepoLink] = useState('');
   const [youtubeLiveLink, setYoutubeLiveLink] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loadingConfig, setLoadingConfig] = useState(true);
   const [copiedField, setCopiedField] = useState<'ssid' | 'pass' | null>(null);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
 
-  // Use real-time announcements
-  const { announcements } = useRealtimeAnnouncements();
+  const team = teams.find(t => t.id === teamId) || null;
 
-  const fetchData = async () => {
-    try {
-      const t = await dbService.getTeam(teamId);
-      if (t) {
-        setTeam(t);
-        setSubmissionLink(t.submissionLink || '');
-        setGitRepoLink(t.gitRepoLink || '');
-        setYoutubeLiveLink(t.youtubeLiveLink || '');
-        if (t.assignedVolunteerId) {
-          const v = await dbService.getVolunteer(t.assignedVolunteerId);
+  // Initialize form usage when team data is first loaded
+  useEffect(() => {
+    if (team) {
+      if (!submissionLink) setSubmissionLink(team.submissionLink || '');
+      if (!gitRepoLink) setGitRepoLink(team.gitRepoLink || '');
+      if (!youtubeLiveLink) setYoutubeLiveLink(team.youtubeLiveLink || '');
+    }
+  }, [team?.id]); // Only run once per team load (approx)
+
+  // Fetch helper data (Config, Volunteer)
+  useEffect(() => {
+    const fetchHelperData = async () => {
+      try {
+        setConfig(await dbService.getConfig());
+        if (team && team.assignedVolunteerId) {
+          const v = await dbService.getVolunteer(team.assignedVolunteerId);
           setVolunteer(v || null);
         }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoadingConfig(false);
       }
-      setConfig(await dbService.getConfig());
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+    fetchHelperData();
+  }, [team?.assignedVolunteerId]);
 
-  useEffect(() => {
-    fetchData();
-    const interval = setInterval(fetchData, 30000);
-    return () => clearInterval(interval);
-  }, [teamId]);
+  // Derived loading state
+  const loading = teamsLoading || loadingConfig;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,7 +72,7 @@ export const TeamDashboard: React.FC<TeamDashboardProps> = ({ teamId }) => {
         submissionTime: new Date().toISOString()
       };
       await dbService.updateTeam(updatedTeam);
-      setTeam(updatedTeam);
+      // No need to setTeam, hook will update
       setShowSuccessToast(true);
       setTimeout(() => setShowSuccessToast(false), 3000);
     } catch (err) {

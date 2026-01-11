@@ -3,28 +3,32 @@ import { Team, Announcement, HackathonConfig, Volunteer } from '../types';
 import { dbService } from '../services/mockDb';
 import { StatsCard } from '../components/StatsCard';
 import { AnnouncementFeed } from '../components/AnnouncementFeed';
-import { Users, UserCheck, CheckCircle, Megaphone, Plus, Download, Edit2, Send, Eye, ExternalLink, Trophy, Medal, X, Loader2, Search, Filter, BarChart3, Sparkles, Clock, AlertCircle } from 'lucide-react';
+import { Users, UserCheck, CheckCircle, Megaphone, Plus, Download, Edit2, Send, Eye, ExternalLink, Trophy, Medal, X, Loader2, Search, Filter, BarChart3, Sparkles, Clock, AlertCircle, FileText } from 'lucide-react';
+
+import { useRealtimeTeams, useRealtimeAnnouncements, useRealtimeNotifications } from '../hooks/useRealtime';
 
 export const AdminDashboard: React.FC = () => {
-    const [teams, setTeams] = useState<Team[]>([]);
+    // Real-time data hooks
+    const { teams, loading: teamsLoading } = useRealtimeTeams();
+    const { announcements, loading: announcementsLoading } = useRealtimeAnnouncements();
+    const { notifications, addNotification } = useRealtimeNotifications();
+
     const [volunteers, setVolunteers] = useState<Volunteer[]>([]);
-    const [announcements, setAnnouncements] = useState<Announcement[]>([]);
     const [newAnnouncement, setNewAnnouncement] = useState('');
-    const [activeTab, setActiveTab] = useState<'overview' | 'teams' | 'volunteers' | 'leaderboard'>('overview');
+    const [activeTab, setActiveTab] = useState<'overview' | 'teams' | 'volunteers' | 'submissions' | 'leaderboard'>('overview');
     const [isPosting, setIsPosting] = useState(false);
     const [showSuccessToast, setShowSuccessToast] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [editingTeamId, setEditingTeamId] = useState<string | null>(null);
 
-    const fetchData = async () => {
-        setTeams(await dbService.getAllTeams());
+    // Fetch volunteers only (teams/announcements handled by hooks)
+    const fetchVolunteers = async () => {
         setVolunteers(await dbService.getVolunteers());
-        setAnnouncements(await dbService.getAnnouncements());
     };
 
     useEffect(() => {
-        fetchData();
+        fetchVolunteers();
     }, []);
 
     const handlePostAnnouncement = async (e: React.FormEvent) => {
@@ -34,7 +38,6 @@ export const AdminDashboard: React.FC = () => {
         try {
             await dbService.postAnnouncement(newAnnouncement);
             setNewAnnouncement('');
-            setAnnouncements(await dbService.getAnnouncements());
             setSuccessMessage('Announcement posted successfully!');
             setShowSuccessToast(true);
             setTimeout(() => setShowSuccessToast(false), 3000);
@@ -52,7 +55,6 @@ export const AdminDashboard: React.FC = () => {
         if (!team.submissionViewed) {
             const updatedTeam = { ...team, submissionViewed: true };
             await dbService.updateTeam(updatedTeam);
-            setTeams(teams.map(t => t.id === team.id ? updatedTeam : t));
         }
     };
 
@@ -63,7 +65,6 @@ export const AdminDashboard: React.FC = () => {
 
         const updatedTeam = { ...team, score };
         await dbService.updateTeam(updatedTeam);
-        setTeams(teams.map(t => t.id === teamId ? updatedTeam : t));
     };
 
     const handleExport = () => {
@@ -84,6 +85,54 @@ export const AdminDashboard: React.FC = () => {
         setTimeout(() => setShowSuccessToast(false), 3000);
     };
 
+    const handleAddTeam = async () => {
+        const name = prompt('Enter Team Name:');
+        if (!name) return;
+        const email = prompt('Enter Team Email:');
+
+        const newTeam: Team = {
+            id: `t${Date.now()}`,
+            name,
+            email: email || `team${Date.now()}@hackfest.com`,
+            members: [],
+            problemStatement: 'Not assigned yet',
+            roomNumber: 'TBD',
+            tableNumber: 'TBD',
+            wifiSsid: 'Hackfest-Guest',
+            wifiPass: 'welcome123',
+            assignedVolunteerId: '',
+            isCheckedIn: false,
+            score: 0
+        };
+
+        await dbService.createTeam(newTeam);
+        setSuccessMessage('Team added successfully!');
+        setShowSuccessToast(true);
+        setTimeout(() => setShowSuccessToast(false), 3000);
+    };
+
+    const handleAddVolunteer = async () => {
+        const name = prompt('Enter Volunteer Name:');
+        if (!name) return;
+        const email = prompt('Enter Volunteer Email:');
+
+        const newVolunteer: Volunteer = {
+            id: `v${Date.now()}`,
+            name,
+            email: email || `vol${Date.now()}@hackfest.com`,
+            phone: '',
+            role: 'Floor Support',
+            isAvailable: true
+        };
+
+        await dbService.createVolunteer(newVolunteer);
+        setSuccessMessage('Volunteer added successfully!');
+        setShowSuccessToast(true);
+        setTimeout(() => setShowSuccessToast(false), 3000);
+        // Refresh volunteers list since it's not hooked to realtime yet
+        setVolunteers(await dbService.getVolunteers());
+    };
+
     const totalTeams = teams.length;
     const checkedInTeams = teams.filter(t => t.isCheckedIn).length;
     const submittedTeams = teams.filter(t => t.submissionLink).length;
@@ -98,6 +147,7 @@ export const AdminDashboard: React.FC = () => {
     const tabs = [
         { id: 'overview', label: 'Overview', icon: BarChart3 },
         { id: 'teams', label: 'Teams', icon: Users },
+        { id: 'submissions', label: 'Submissions', icon: FileText },
         { id: 'volunteers', label: 'Volunteers', icon: UserCheck },
         { id: 'leaderboard', label: 'Leaderboard', icon: Trophy },
     ] as const;
@@ -267,7 +317,10 @@ export const AdminDashboard: React.FC = () => {
                                         className="w-full pl-10 pr-4 py-2.5 border-2 border-slate-200 rounded-xl text-sm font-medium focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all"
                                     />
                                 </div>
-                                <button className="btn-slide-in-primary btn-sm">
+                                <button
+                                    onClick={handleAddTeam}
+                                    className="btn-slide-in-primary btn-sm"
+                                >
                                     <Plus className="w-4 h-4" />
                                     <span>Add Team</span>
                                 </button>
@@ -417,7 +470,10 @@ export const AdminDashboard: React.FC = () => {
                             <h3 className="text-xl font-bold text-slate-900">Volunteers</h3>
                             <p className="text-sm text-slate-500">Floor support team details</p>
                         </div>
-                        <button className="btn-slide-in-primary btn-sm">
+                        <button
+                            onClick={handleAddVolunteer}
+                            className="btn-slide-in-primary btn-sm"
+                        >
                             <Plus className="w-4 h-4" />
                             <span>Add Volunteer</span>
                         </button>
@@ -451,6 +507,125 @@ export const AdminDashboard: React.FC = () => {
                                 </div>
                             </div>
                         ))}
+                    </div>
+                </div>
+            )}
+
+            {/* Submissions Tab */}
+            {activeTab === 'submissions' && (
+                <div className="glass-card rounded-3xl overflow-hidden shadow-lg shadow-slate-200/50 border border-white/60">
+                    <div className="px-6 sm:px-8 py-6 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white">
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                            <div>
+                                <h3 className="text-xl font-bold text-slate-900">Project Submissions</h3>
+                                <p className="text-sm text-slate-500">Review and evaluate team projects</p>
+                            </div>
+                            <div className="relative flex-1 sm:w-64">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                <input
+                                    type="text"
+                                    placeholder="Search submissions..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="w-full pl-10 pr-4 py-2.5 border-2 border-slate-200 rounded-xl text-sm font-medium focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-slate-100">
+                            <thead className="bg-slate-50/80">
+                                <tr>
+                                    <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Team</th>
+                                    <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Problem Statement</th>
+                                    <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Links</th>
+                                    <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
+                                    <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Submitted At</th>
+                                </tr>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-slate-50">
+                                {filteredTeams.filter(t => t.submissionLink || t.gitRepoLink || t.youtubeLiveLink).map((team) => (
+                                    <tr key={team.id} className="hover:bg-slate-50/80 transition-colors">
+                                        <td className="px-6 py-5 whitespace-nowrap">
+                                            <div className="flex items-center space-x-3">
+                                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-100 to-indigo-100 flex items-center justify-center text-violet-600 font-bold">
+                                                    {team.name.charAt(0)}
+                                                </div>
+                                                <div>
+                                                    <div className="text-sm font-bold text-slate-900">{team.name}</div>
+                                                    <div className="text-xs text-slate-500 mt-0.5">{team.email}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-5">
+                                            <div className="text-sm text-slate-600 max-w-xs truncate" title={team.problemStatement}>
+                                                {team.problemStatement}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-5">
+                                            <div className="flex flex-col space-y-2">
+                                                {team.submissionLink && (
+                                                    <a href={team.submissionLink} target="_blank" rel="noreferrer" className="inline-flex items-center text-xs font-medium text-blue-600 hover:underline">
+                                                        <ExternalLink className="w-3 h-3 mr-1" /> Main Project
+                                                    </a>
+                                                )}
+                                                {team.gitRepoLink && (
+                                                    <a href={team.gitRepoLink} target="_blank" rel="noreferrer" className="inline-flex items-center text-xs font-medium text-slate-600 hover:underline">
+                                                        <ExternalLink className="w-3 h-3 mr-1" /> Git Repo
+                                                    </a>
+                                                )}
+                                                {team.youtubeLiveLink && (
+                                                    <a href={team.youtubeLiveLink} target="_blank" rel="noreferrer" className="inline-flex items-center text-xs font-medium text-red-600 hover:underline">
+                                                        <ExternalLink className="w-3 h-3 mr-1" /> YouTube Demo
+                                                    </a>
+                                                )}
+                                                {!team.submissionLink && !team.gitRepoLink && !team.youtubeLiveLink && (
+                                                    <span className="text-xs text-slate-400 italic">No links submitted</span>
+                                                )}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-5 whitespace-nowrap">
+                                            <button
+                                                onClick={() => handleViewSubmission(team)}
+                                                className={`group/btn inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${team.submissionViewed
+                                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                                    : 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100'
+                                                    }`}
+                                            >
+                                                {team.submissionViewed ? (
+                                                    <>
+                                                        <CheckCircle className="w-3 h-3 mr-1.5" />
+                                                        Reviewed
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Eye className="w-3 h-3 mr-1.5" />
+                                                        Mark Reviewed
+                                                    </>
+                                                )}
+                                            </button>
+                                        </td>
+                                        <td className="px-6 py-5 whitespace-nowrap text-sm text-slate-500">
+                                            {team.submissionTime ? new Date(team.submissionTime).toLocaleString() : '-'}
+                                        </td>
+                                    </tr>
+                                ))}
+                                {filteredTeams.filter(t => t.submissionLink || t.gitRepoLink || t.youtubeLiveLink).length === 0 && (
+                                    <tr>
+                                        <td colSpan={5} className="px-6 py-12 text-center text-slate-500">
+                                            <div className="flex flex-col items-center justify-center">
+                                                <div className="bg-slate-100 p-4 rounded-full mb-3">
+                                                    <FileText className="w-8 h-8 text-slate-400" />
+                                                </div>
+                                                <p className="font-medium">No submissions found</p>
+                                                <p className="text-sm text-slate-400 mt-1">Teams haven't submitted their projects yet.</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             )}
