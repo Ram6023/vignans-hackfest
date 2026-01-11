@@ -72,19 +72,52 @@ export const AdminDashboard: React.FC = () => {
     };
 
     const handleExport = () => {
-        const csvContent = "data:text/csv;charset=utf-8,"
-            + "Team ID,Name,Email,Checked In,Submission Link,Git Repo Link,YouTube Link,Viewed,Score\n"
-            + teams.map(t => `${t.id},${t.name},${t.email},${t.isCheckedIn},${t.submissionLink || ''},${t.gitRepoLink || ''},${t.youtubeLiveLink || ''},${t.submissionViewed || false},${t.score || 0}`).join("\n");
+        const headers = [
+            "Team ID", "Name", "Email", "Members", "Problem Statement",
+            "Room", "Checked In",
+            "Main Project", "Git Repo", "YouTube Demo", "Submitted At",
+            "Volunteer Associated", "Review Status", "Score"
+        ];
 
+        const rows = teams.map(t => {
+            const volunteer = volunteers.find(v => v.id === t.assignedVolunteerId);
+            const memberNames = t.members ? t.members.map(m => m.name).join("; ") : "";
+            const volunteerName = volunteer ? volunteer.name : "Unassigned";
+            const status = t.submissionViewed ? "Reviewed" : "Pending";
+            const submittedAt = t.submissionTime ? new Date(t.submissionTime).toLocaleString().replace(/,/g, " ") : "Not Submitted";
+
+            // Helper to escape CSV fields
+            const escape = (str: string | undefined | null) => `"${(str || "").toString().replace(/"/g, '""')}"`;
+
+            return [
+                t.id,
+                escape(t.name),
+                escape(t.email),
+                escape(memberNames),
+                escape(t.problemStatement),
+                escape(t.roomNumber),
+                t.isCheckedIn ? "Yes" : "No",
+                escape(t.submissionLink),
+                escape(t.gitRepoLink),
+                escape(t.youtubeLiveLink),
+                submittedAt,
+                escape(volunteerName),
+                status,
+                t.score || 0
+            ].join(",");
+        });
+
+        const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows].join("\n");
         const encodedUri = encodeURI(csvContent);
+
         const link = document.createElement("a");
         link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "hackathon_data.csv");
+        link.setAttribute("download", `hackfest_export_${new Date().toISOString().slice(0, 10)}.csv`);
         document.body.appendChild(link);
         link.click();
         link.remove();
 
-        setSuccessMessage('Data exported successfully!');
+        setSuccessMessage('Comprehensive data exported successfully!');
         setShowSuccessToast(true);
         setTimeout(() => setShowSuccessToast(false), 3000);
     };
@@ -195,7 +228,7 @@ export const AdminDashboard: React.FC = () => {
             </div>
 
             {/* Tabs */}
-            <div className="flex space-x-1 p-1.5 bg-white/50 backdrop-blur-sm rounded-2xl max-w-2xl border border-white/40 overflow-x-auto">
+            <div className="flex space-x-1 p-1.5 bg-white/50 backdrop-blur-sm rounded-2xl w-fit border border-white/40">
                 {tabs.map((tab) => {
                     const Icon = tab.icon;
                     return (
