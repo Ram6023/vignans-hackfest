@@ -18,6 +18,8 @@ export const TeamDashboard: React.FC<TeamDashboardProps> = ({ teamId }) => {
   const [config, setConfig] = useState<HackathonConfig | null>(null);
   const [showWifi, setShowWifi] = useState(false);
   const [submissionLink, setSubmissionLink] = useState('');
+  const [gitRepoLink, setGitRepoLink] = useState('');
+  const [youtubeLiveLink, setYoutubeLiveLink] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
   const [copiedField, setCopiedField] = useState<'ssid' | 'pass' | null>(null);
@@ -32,6 +34,8 @@ export const TeamDashboard: React.FC<TeamDashboardProps> = ({ teamId }) => {
       if (t) {
         setTeam(t);
         setSubmissionLink(t.submissionLink || '');
+        setGitRepoLink(t.gitRepoLink || '');
+        setYoutubeLiveLink(t.youtubeLiveLink || '');
         if (t.assignedVolunteerId) {
           const v = await dbService.getVolunteer(t.assignedVolunteerId);
           setVolunteer(v || null);
@@ -59,6 +63,8 @@ export const TeamDashboard: React.FC<TeamDashboardProps> = ({ teamId }) => {
       const updatedTeam = {
         ...team,
         submissionLink: submissionLink,
+        gitRepoLink: gitRepoLink,
+        youtubeLiveLink: youtubeLiveLink,
         submissionTime: new Date().toISOString()
       };
       await dbService.updateTeam(updatedTeam);
@@ -353,7 +359,7 @@ export const TeamDashboard: React.FC<TeamDashboardProps> = ({ teamId }) => {
 
             <form onSubmit={handleSubmit} className="mt-auto bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
               <label htmlFor="link" className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
-                Project URL
+                Project URL (Main Submission)
               </label>
               <input
                 type="url"
@@ -363,6 +369,30 @@ export const TeamDashboard: React.FC<TeamDashboardProps> = ({ teamId }) => {
                 placeholder="https://github.com/username/repo"
                 value={submissionLink}
                 onChange={(e) => setSubmissionLink(e.target.value)}
+              />
+
+              <label htmlFor="gitRepo" className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
+                Git Repository Link
+              </label>
+              <input
+                type="url"
+                id="gitRepo"
+                className="block w-full rounded-xl border-2 border-slate-200 bg-slate-50 focus:bg-white focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 text-sm p-4 mb-4 transition-all outline-none font-medium placeholder:text-slate-400"
+                placeholder="https://github.com/username/project-repo"
+                value={gitRepoLink}
+                onChange={(e) => setGitRepoLink(e.target.value)}
+              />
+
+              <label htmlFor="youtubeLink" className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
+                YouTube Live Demo Link
+              </label>
+              <input
+                type="url"
+                id="youtubeLink"
+                className="block w-full rounded-xl border-2 border-slate-200 bg-slate-50 focus:bg-white focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 text-sm p-4 mb-4 transition-all outline-none font-medium placeholder:text-slate-400"
+                placeholder="https://youtube.com/watch?v=..."
+                value={youtubeLiveLink}
+                onChange={(e) => setYoutubeLiveLink(e.target.value)}
               />
               <button
                 type="submit"

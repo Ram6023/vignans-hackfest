@@ -30,6 +30,8 @@ export interface Team {
   teamSize?: number;
   lookingForMembers?: boolean;
   skills?: string[];
+  gitRepoLink?: string;
+  youtubeLiveLink?: string;
 }
 
 export interface Volunteer {

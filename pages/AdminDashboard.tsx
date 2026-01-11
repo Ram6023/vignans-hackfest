@@ -68,8 +68,8 @@ export const AdminDashboard: React.FC = () => {
 
     const handleExport = () => {
         const csvContent = "data:text/csv;charset=utf-8,"
-            + "Team ID,Name,Email,Checked In,Submission Link,Viewed,Score\n"
-            + teams.map(t => `${t.id},${t.name},${t.email},${t.isCheckedIn},${t.submissionLink || ''},${t.submissionViewed || false},${t.score || 0}`).join("\n");
+            + "Team ID,Name,Email,Checked In,Submission Link,Git Repo Link,YouTube Link,Viewed,Score\n"
+            + teams.map(t => `${t.id},${t.name},${t.email},${t.isCheckedIn},${t.submissionLink || ''},${t.gitRepoLink || ''},${t.youtubeLiveLink || ''},${t.submissionViewed || false},${t.score || 0}`).join("\n");
 
         const encodedUri = encodeURI(csvContent);
         const link = document.createElement("a");
@@ -282,6 +282,8 @@ export const AdminDashboard: React.FC = () => {
                                     <th className="px-6 sm:px-8 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Team</th>
                                     <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
                                     <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Submission</th>
+                                    <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Git Repo</th>
+                                    <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">YouTube</th>
                                     <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Location</th>
                                     <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Volunteer</th>
                                     <th className="px-6 py-4"></th>
@@ -344,6 +346,42 @@ export const AdminDashboard: React.FC = () => {
                                                     )}
                                                     <ExternalLink className="w-3 h-3 ml-1.5 opacity-60 group-hover/btn:opacity-100 transition-opacity" />
                                                 </button>
+                                            )}
+                                        </td>
+                                        <td className="px-6 py-5 whitespace-nowrap">
+                                            {!team.gitRepoLink ? (
+                                                <span className="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-100 text-slate-500 border border-slate-200">
+                                                    <Clock className="w-3 h-3 mr-1.5" />
+                                                    Not Added
+                                                </span>
+                                            ) : (
+                                                <a
+                                                    href={team.gitRepoLink}
+                                                    target="_blank"
+                                                    rel="noreferrer"
+                                                    className="group/btn inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-bold border bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:shadow-md transition-all"
+                                                >
+                                                    <ExternalLink className="w-3 h-3 mr-1.5" />
+                                                    View Repo
+                                                </a>
+                                            )}
+                                        </td>
+                                        <td className="px-6 py-5 whitespace-nowrap">
+                                            {!team.youtubeLiveLink ? (
+                                                <span className="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-100 text-slate-500 border border-slate-200">
+                                                    <Clock className="w-3 h-3 mr-1.5" />
+                                                    Not Added
+                                                </span>
+                                            ) : (
+                                                <a
+                                                    href={team.youtubeLiveLink}
+                                                    target="_blank"
+                                                    rel="noreferrer"
+                                                    className="group/btn inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-bold border bg-red-50 text-red-700 border-red-200 hover:bg-red-100 hover:shadow-md transition-all"
+                                                >
+                                                    <ExternalLink className="w-3 h-3 mr-1.5" />
+                                                    Watch Demo
+                                                </a>
                                             )}
                                         </td>
                                         <td className="px-6 py-5 whitespace-nowrap">
