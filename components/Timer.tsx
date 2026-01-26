@@ -103,10 +103,13 @@ export const Timer: React.FC<TimerProps> = ({ endTime }) => {
           </div>
         </div>
 
-        {/* Timer Display */}
-        <div className="relative flex items-center gap-2 sm:gap-4">
-          {/* Hours */}
-          <div className="text-center group/digit">
+        {/* Timer Display Grid */}
+        <div className="relative grid grid-cols-[auto_auto_auto_auto_auto] items-center justify-center gap-x-2 sm:gap-x-4">
+
+          {/* Row 1: Digit Boxes and Separators */}
+
+          {/* Hours Box */}
+          <div className="group/digit">
             <div className={`relative bg-white/5 border border-white/10 rounded-2xl sm:rounded-3xl p-3 sm:p-5 backdrop-blur-sm min-w-[70px] sm:min-w-[100px] transition-all duration-300 group-hover/digit:bg-white/10 group-hover/digit:border-white/20 ${config.ring} ring-1`}>
               {/* Shine Effect */}
               <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent opacity-0 group-hover/digit:opacity-100 transition-opacity rounded-2xl sm:rounded-3xl"></div>
@@ -114,40 +117,56 @@ export const Timer: React.FC<TimerProps> = ({ endTime }) => {
                 {String(timeLeft.hours).padStart(2, '0')}
               </span>
             </div>
-            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] -mr-[0.2em] text-white/30 mt-2 sm:mt-3 block">Hours</span>
           </div>
 
-          {/* Separator */}
-          <div className="flex flex-col gap-2 pb-5 sm:pb-7">
+          {/* Separator 1 */}
+          <div className="flex flex-col gap-2">
             <span className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${config.glow.replace('/20', '/80')} animate-pulse shadow-lg`}></span>
             <span className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${config.glow.replace('/20', '/80')} animate-pulse shadow-lg`} style={{ animationDelay: '0.5s' }}></span>
           </div>
 
-          {/* Minutes */}
-          <div className="text-center group/digit">
+          {/* Minutes Box */}
+          <div className="group/digit">
             <div className={`relative bg-white/5 border border-white/10 rounded-2xl sm:rounded-3xl p-3 sm:p-5 backdrop-blur-sm min-w-[70px] sm:min-w-[100px] transition-all duration-300 group-hover/digit:bg-white/10 group-hover/digit:border-white/20 ${config.ring} ring-1`}>
               <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent opacity-0 group-hover/digit:opacity-100 transition-opacity rounded-2xl sm:rounded-3xl"></div>
               <span className="relative text-4xl sm:text-6xl lg:text-7xl font-black font-mono tracking-tighter text-white tabular-nums">
                 {String(timeLeft.minutes).padStart(2, '0')}
               </span>
             </div>
-            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] -mr-[0.2em] text-white/30 mt-2 sm:mt-3 block">Minutes</span>
           </div>
 
-          {/* Separator */}
-          <div className="flex flex-col gap-2 pb-5 sm:pb-7">
+          {/* Separator 2 */}
+          <div className="flex flex-col gap-2">
             <span className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${config.glow.replace('/20', '/80')} animate-pulse shadow-lg`}></span>
             <span className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${config.glow.replace('/20', '/80')} animate-pulse shadow-lg`} style={{ animationDelay: '0.5s' }}></span>
           </div>
 
-          {/* Seconds */}
-          <div className="text-center group/digit">
+          {/* Seconds Box */}
+          <div className="group/digit">
             <div className={`relative border rounded-2xl sm:rounded-3xl p-3 sm:p-5 backdrop-blur-sm min-w-[70px] sm:min-w-[100px] transition-all duration-300 ${config.accentBg} group-hover/digit:scale-105`}>
               <span className={`text-4xl sm:text-6xl lg:text-7xl font-black font-mono tracking-tighter ${config.accent} tabular-nums`}>
                 {String(timeLeft.seconds).padStart(2, '0')}
               </span>
             </div>
-            <span className={`text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] -mr-[0.2em] ${config.accent} opacity-60 mt-2 sm:mt-3 block`}>Seconds</span>
+          </div>
+
+          {/* Row 2: Labels */}
+          <div className="text-center">
+            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] -mr-[0.2em] text-white/30 mt-2 sm:mt-3 block">Hours</span>
+          </div>
+
+          {/* Empty space under separator */}
+          <div />
+
+          <div className="text-center">
+            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] -mr-[0.2em] text-white/30 mt-2 sm:mt-3 block">Minutes</span>
+          </div>
+
+          {/* Empty space under separator */}
+          <div />
+
+          <div className="text-center">
+            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] -mr-[0.2em] text-white/30 mt-2 sm:mt-3 block">Seconds</span>
           </div>
         </div>
 

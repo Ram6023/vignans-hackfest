@@ -164,7 +164,7 @@ export const VolunteerDashboard: React.FC<VolunteerDashboardProps> = ({ voluntee
 
       {/* Stats Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="lg:col-span-2 h-[200px]">
+        <div className="lg:col-span-2 h-[260px]">
           <Timer endTime={config.endTime} />
         </div>
         <StatsCard

@@ -1,7 +1,7 @@
 import { DbSchema, Team, User, Volunteer, Announcement, HackathonConfig, ScheduleEvent, ProblemStatement } from '../types';
 import { wsService } from './websocket';
 
-const DB_KEY = 'vignans_hackfest_prod_v1';
+const DB_KEY = 'vignans_hackfest_prod_v1.1';
 
 const INITIAL_CONFIG: HackathonConfig = {
   startTime: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
@@ -15,18 +15,155 @@ const INITIAL_CONFIG: HackathonConfig = {
 };
 
 const INITIAL_USERS: User[] = [
-  { id: 'u1', email: 'admin@vignan.com', name: 'Admin User', role: 'admin' },
+  { id: 'admin', email: 'admin@vignan.com', name: 'System Admin', role: 'admin' },
+  { id: 'volunteer-1', email: 'volunteer@vignan.com', name: 'Sarah Wilson', role: 'volunteer' },
+  { id: 'team-1', email: 'team@vignan.com', name: 'Alpha Coders', role: 'team' },
 ];
 
-const INITIAL_VOLUNTEERS: Volunteer[] = [];
+const INITIAL_VOLUNTEERS: Volunteer[] = [
+  {
+    id: 'volunteer-1',
+    name: 'Sarah Wilson',
+    email: 'volunteer@vignan.com',
+    phone: '9876543210',
+    role: 'Technical Mentor',
+    specialization: 'Full Stack Development',
+    isAvailable: true
+  },
+  {
+    id: 'volunteer-2',
+    name: 'David Miller',
+    email: 'david@vignan.com',
+    phone: '9871234560',
+    role: 'UI/UX Mentor',
+    specialization: 'Design Systems',
+    isAvailable: true
+  }
+];
 
-const INITIAL_TEAMS: Team[] = [];
+const INITIAL_TEAMS: Team[] = [
+  {
+    id: 'team-1',
+    name: 'Alpha Coders',
+    email: 'team@vignan.com',
+    members: ['Alex Rivera', 'Jordan Smith', 'Taylor Chen'],
+    problemStatement: 'Smart City Traffic Management',
+    roomNumber: 'Main Hall',
+    tableNumber: '42',
+    wifiSsid: 'Hackfest_Guest',
+    wifiPass: 'innovate2025',
+    assignedVolunteerId: 'volunteer-1',
+    isCheckedIn: true,
+    checkInTime: new Date(Date.now() - 1000 * 60 * 60 * 1.5).toISOString()
+  },
+  {
+    id: 'team-2',
+    name: 'Byte Busters',
+    email: 'byte@vignan.com',
+    members: ['Maya Patel', 'Liam Wong'],
+    problemStatement: 'Sustainable Energy Grid',
+    roomNumber: 'Room 204',
+    tableNumber: '15',
+    wifiSsid: 'Hackfest_Guest',
+    wifiPass: 'innovate2025',
+    assignedVolunteerId: 'volunteer-2',
+    isCheckedIn: false
+  }
+];
 
-const INITIAL_SCHEDULE: ScheduleEvent[] = [];
+const INITIAL_SCHEDULE: ScheduleEvent[] = [
+  {
+    id: '1',
+    title: 'Opening Ceremony',
+    description: 'Welcome and Keynote Speech by Chief Guest',
+    startTime: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
+    endTime: new Date(Date.now() - 1000 * 60 * 60 * 1).toISOString(),
+    type: 'ceremony',
+    location: 'Main Auditorium',
+    isCompleted: true
+  },
+  {
+    id: '2',
+    title: 'Hacking Starts!',
+    description: 'Begin working on your innovative solutions',
+    startTime: new Date(Date.now() - 1000 * 60 * 60 * 1).toISOString(),
+    endTime: new Date(Date.now() + 1000 * 60 * 60 * 23).toISOString(),
+    type: 'deadline',
+    location: 'Hacking Bays'
+  },
+  {
+    id: '3',
+    title: 'Lunch Break',
+    description: 'Refresh and recharge',
+    startTime: new Date(Date.now() + 1000 * 60 * 60 * 1).toISOString(),
+    endTime: new Date(Date.now() + 1000 * 60 * 60 * 2).toISOString(),
+    type: 'meal',
+    location: 'Food Court'
+  },
+  {
+    id: '4',
+    title: 'Technical Workshop',
+    description: 'Introduction to Cloud Infrastructure',
+    startTime: new Date(Date.now() + 1000 * 60 * 60 * 4).toISOString(),
+    endTime: new Date(Date.now() + 1000 * 60 * 60 * 5).toISOString(),
+    type: 'workshop',
+    location: 'Seminar Hall'
+  }
+];
 
-const INITIAL_PROBLEM_STATEMENTS: ProblemStatement[] = [];
+const INITIAL_PROBLEM_STATEMENTS: ProblemStatement[] = [
+  {
+    id: 'ps1',
+    title: 'Smart City Traffic Management',
+    description: 'Develop an AI-driven system to optimize traffic signal timings in real-time based on traffic density and emergency vehicle priority.',
+    category: 'Transportation',
+    difficulty: 'intermediate',
+    sponsor: 'Urban Mobility Dept'
+  },
+  {
+    id: 'ps2',
+    title: 'Sustainable Energy Grid',
+    description: 'Create a decentralized energy management platform for sharing renewable energy within local communities using blockchain.',
+    category: 'Sustainability',
+    difficulty: 'advanced',
+    sponsor: 'GreenTech Solutions'
+  },
+  {
+    id: 'ps3',
+    title: 'Health-Track AI',
+    description: 'A wearable solution for early detection of respiratory issues using non-invasive sensors and edge computing.',
+    category: 'Healthcare',
+    difficulty: 'intermediate',
+    sponsor: 'Vignan Biotech'
+  }
+];
 
-const INITIAL_ANNOUNCEMENTS: Announcement[] = [];
+const INITIAL_ANNOUNCEMENTS: Announcement[] = [
+  {
+    id: 'ann1',
+    message: 'Welcome to Vignan\'s Hackfest 2025! Let the innovation begin.',
+    createdAt: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
+    author: 'Admin',
+    priority: 'normal',
+    category: 'general'
+  },
+  {
+    id: 'ann2',
+    message: 'Technical workshop on Cloud Infrastructure starting in 15 mins in Seminar Hall.',
+    createdAt: new Date(Date.now() - 1000 * 60 * 10).toISOString(),
+    author: 'Admin',
+    priority: 'important',
+    category: 'technical'
+  },
+  {
+    id: 'ann3',
+    message: 'Food token distribution has started at the registration desk.',
+    createdAt: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
+    author: 'Admin',
+    priority: 'normal',
+    category: 'food'
+  }
+];
 
 const initializeDb = (): DbSchema => {
   const existing = localStorage.getItem(DB_KEY);
