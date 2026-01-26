@@ -93,7 +93,7 @@ export const Timer: React.FC<TimerProps> = ({ endTime }) => {
         <div className="relative mb-6 sm:mb-8">
           <div className={`inline-flex items-center space-x-2 px-4 py-2 rounded-full ${config.accentBg} border backdrop-blur-xl`}>
             <StatusIcon className={`w-4 h-4 ${config.accent} ${status === 'running' ? 'animate-pulse' : status === 'ending' ? 'animate-bounce' : ''}`} />
-            <span className={`text-xs font-bold tracking-widest uppercase ${config.accent}`}>{config.label}</span>
+            <span className={`text-xs font-bold tracking-widest uppercase ${config.accent} -mr-[0.1em]`}>{config.label}</span>
             {status !== 'ended' && (
               <span className="relative flex h-2 w-2">
                 <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${config.accent.replace('text', 'bg').replace('-400', '-500')} opacity-75`}></span>
@@ -114,11 +114,11 @@ export const Timer: React.FC<TimerProps> = ({ endTime }) => {
                 {String(timeLeft.hours).padStart(2, '0')}
               </span>
             </div>
-            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-white/30 mt-2 sm:mt-3 block">Hours</span>
+            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] -mr-[0.2em] text-white/30 mt-2 sm:mt-3 block">Hours</span>
           </div>
 
           {/* Separator */}
-          <div className="flex flex-col gap-2 pb-6 sm:pb-8">
+          <div className="flex flex-col gap-2 pb-5 sm:pb-7">
             <span className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${config.glow.replace('/20', '/80')} animate-pulse shadow-lg`}></span>
             <span className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${config.glow.replace('/20', '/80')} animate-pulse shadow-lg`} style={{ animationDelay: '0.5s' }}></span>
           </div>
@@ -131,11 +131,11 @@ export const Timer: React.FC<TimerProps> = ({ endTime }) => {
                 {String(timeLeft.minutes).padStart(2, '0')}
               </span>
             </div>
-            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-white/30 mt-2 sm:mt-3 block">Minutes</span>
+            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] -mr-[0.2em] text-white/30 mt-2 sm:mt-3 block">Minutes</span>
           </div>
 
           {/* Separator */}
-          <div className="flex flex-col gap-2 pb-6 sm:pb-8">
+          <div className="flex flex-col gap-2 pb-5 sm:pb-7">
             <span className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${config.glow.replace('/20', '/80')} animate-pulse shadow-lg`}></span>
             <span className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${config.glow.replace('/20', '/80')} animate-pulse shadow-lg`} style={{ animationDelay: '0.5s' }}></span>
           </div>
@@ -147,7 +147,7 @@ export const Timer: React.FC<TimerProps> = ({ endTime }) => {
                 {String(timeLeft.seconds).padStart(2, '0')}
               </span>
             </div>
-            <span className={`text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] ${config.accent} opacity-60 mt-2 sm:mt-3 block`}>Seconds</span>
+            <span className={`text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] -mr-[0.2em] ${config.accent} opacity-60 mt-2 sm:mt-3 block`}>Seconds</span>
           </div>
         </div>
 
