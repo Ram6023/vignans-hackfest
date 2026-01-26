@@ -889,6 +889,11 @@ export const AdminDashboard: React.FC = () => {
                                                     placeholder="0"
                                                 />
                                             </td>
+                                            <td className="px-6 py-5 whitespace-nowrap">
+                                                <div className="text-xs text-slate-500 italic max-w-[200px] truncate" title={team.judgeRemarks}>
+                                                    {team.judgeRemarks || <span className="text-slate-300">No remarks</span>}
+                                                </div>
+                                            </td>
                                         </tr>
                                     );
                                 })}
