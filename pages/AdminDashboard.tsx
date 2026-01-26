@@ -376,7 +376,6 @@ export const AdminDashboard: React.FC = () => {
                                     <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">YouTube</th>
                                     <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Location</th>
                                     <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Volunteer</th>
-                                    <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Judge Remarks</th>
                                     <th className="px-6 py-4"></th>
                                 </tr>
                             </thead>
@@ -488,11 +487,6 @@ export const AdminDashboard: React.FC = () => {
                                             {volunteers.find(v => v.id === team.assignedVolunteerId)?.name || (
                                                 <span className="text-slate-400 italic">Unassigned</span>
                                             )}
-                                        </td>
-                                        <td className="px-6 py-5 whitespace-nowrap">
-                                            <div className="max-w-[200px] truncate group-hover:whitespace-normal group-hover:overflow-visible group-hover:bg-white group-hover:z-10 group-hover:relative group-hover:p-1 group-hover:rounded text-xs text-slate-600 italic">
-                                                {team.judgeRemarks || <span className="text-slate-300">No remarks</span>}
-                                            </div>
                                         </td>
                                         <td className="px-6 py-5 whitespace-nowrap text-right">
                                             <button className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-colors opacity-0 group-hover:opacity-100">
