@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { User } from '../types';
-import { LogOut, Rocket, Zap, Menu, X, Settings, ChevronDown, User as UserIcon, Shield, Users, Wifi, WifiOff } from 'lucide-react';
+import { LogOut, Rocket, Zap, Menu, X, Settings, ChevronDown, User as UserIcon, Shield, Users, Wifi, WifiOff, Award } from 'lucide-react';
 import { NotificationCenter } from './NotificationCenter';
 import { useConnectionStatus } from '../hooks/useRealtime';
 
@@ -10,8 +10,8 @@ const ConnectionStatus: React.FC = () => {
 
   return (
     <div className={`flex items-center px-3 py-2 rounded-xl text-xs font-semibold transition-all ${isOnline
-        ? 'bg-emerald-100 text-emerald-700'
-        : 'bg-rose-100 text-rose-700'
+      ? 'bg-emerald-100 text-emerald-700'
+      : 'bg-rose-100 text-rose-700'
       }`}>
       {isOnline ? (
         <>
@@ -53,6 +53,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout, title 
       case 'admin': return Shield;
       case 'volunteer': return Zap;
       case 'team': return Users;
+      case 'judge': return Award;
       default: return UserIcon;
     }
   };
@@ -62,6 +63,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout, title 
       case 'admin': return { bg: 'bg-rose-100', text: 'text-rose-600', dot: 'bg-rose-500' };
       case 'volunteer': return { bg: 'bg-emerald-100', text: 'text-emerald-600', dot: 'bg-emerald-500' };
       case 'team': return { bg: 'bg-violet-100', text: 'text-violet-600', dot: 'bg-violet-500' };
+      case 'judge': return { bg: 'bg-indigo-100', text: 'text-indigo-600', dot: 'bg-indigo-500' };
       default: return { bg: 'bg-slate-100', text: 'text-slate-600', dot: 'bg-slate-500' };
     }
   };

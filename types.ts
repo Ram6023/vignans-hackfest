@@ -1,4 +1,4 @@
-export type Role = 'admin' | 'volunteer' | 'team';
+export type Role = 'admin' | 'volunteer' | 'team' | 'judge';
 
 export interface User {
   id: string;
@@ -32,6 +32,7 @@ export interface Team {
   skills?: string[];
   gitRepoLink?: string;
   youtubeLiveLink?: string;
+  judgeRemarks?: string;
 }
 
 export interface Volunteer {

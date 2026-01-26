@@ -6,6 +6,7 @@ import { RegisterPage } from './pages/RegisterPage';
 import { TeamDashboard } from './pages/TeamDashboard';
 import { VolunteerDashboard } from './pages/VolunteerDashboard';
 import { AdminDashboard } from './pages/AdminDashboard';
+import { JudgeDashboard } from './pages/JudgeDashboard';
 import { Layout } from './components/Layout';
 import { wsService } from './services/websocket';
 
@@ -90,6 +91,7 @@ const App: React.FC = () => {
         {user.role === 'team' && <TeamDashboard teamId={user.id} />}
         {user.role === 'volunteer' && <VolunteerDashboard volunteerId={user.id} />}
         {user.role === 'admin' && <AdminDashboard />}
+        {user.role === 'judge' && <JudgeDashboard judgeId={user.id} />}
       </Layout>
     );
   }

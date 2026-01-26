@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { dbService } from '../services/mockDb';
 import { User } from '../types';
-import { Rocket, Lock, Mail, Loader2, ArrowRight, CheckCircle2, Sparkles, Zap, Users, Trophy, Calendar, Star, XCircle } from 'lucide-react';
+import { Rocket, Lock, Mail, Loader2, ArrowRight, CheckCircle2, Sparkles, Zap, Users, Trophy, Calendar, Star, XCircle, Award } from 'lucide-react';
 
 interface LoginPageProps {
   onLogin: (user: User) => void;
@@ -63,6 +63,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onShowRegister })
   const demoAccounts = [
     { role: 'Team', email: 'team@vignan.com', password: 'team123', icon: Users, color: 'violet' },
     { role: 'Volunteer', email: 'volunteer@vignan.com', password: 'vol123', icon: Zap, color: 'emerald' },
+    { role: 'Judge', email: 'judge@vignan.com', password: 'judge123', icon: Award, color: 'indigo' },
     { role: 'Admin', email: 'admin@vignan.com', password: 'admin123', icon: Sparkles, color: 'rose' },
   ];
 

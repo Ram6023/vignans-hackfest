@@ -18,6 +18,7 @@ const INITIAL_USERS: User[] = [
   { id: 'admin', email: 'admin@vignan.com', name: 'System Admin', role: 'admin' },
   { id: 'volunteer-1', email: 'volunteer@vignan.com', name: 'Sarah Wilson', role: 'volunteer' },
   { id: 'team-1', email: 'team@vignan.com', name: 'Alpha Coders', role: 'team' },
+  { id: 'judge-1', email: 'judge@vignan.com', name: 'Dr. Robert Fox', role: 'judge' },
 ];
 
 const INITIAL_VOLUNTEERS: Volunteer[] = [
@@ -420,6 +421,26 @@ export const dbService = {
       team.assignedVolunteerId = volunteerId;
       dbService.saveDb(db);
       wsService.volunteerAssigned({ team, volunteer });
+    }
+  },
+
+  // Judging methods
+  async getTeamsByRoom(room: string): Promise<Team[]> {
+    await delay(200);
+    const db = dbService.getDb();
+    if (!room) return db.teams;
+    return db.teams.filter(t => t.roomNumber.toLowerCase().includes(room.toLowerCase()));
+  },
+
+  async updateJudging(teamId: string, score: number, remarks: string): Promise<void> {
+    await delay(300);
+    const db = dbService.getDb();
+    const team = db.teams.find(t => t.id === teamId);
+    if (team) {
+      team.score = score;
+      team.judgeRemarks = remarks;
+      dbService.saveDb(db);
+      wsService.scoreUpdated(team);
     }
   }
 };
