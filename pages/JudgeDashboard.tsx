@@ -14,7 +14,8 @@ export const JudgeDashboard: React.FC<JudgeDashboardProps> = ({ judgeId }) => {
     const [config, setConfig] = useState<HackathonConfig | null>(null);
     const [loadingConfig, setLoadingConfig] = useState(true);
     const [roomFilter, setRoomFilter] = useState('');
-    const [editingScores, setEditingScores] = useState<Record<string, { score: string, remarks: string }>>({});
+    const [selectedRound, setSelectedRound] = useState<'round1' | 'round2' | 'round3' | 'round4'>('round1');
+    const [editingScores, setEditingScores] = useState<Record<string, Record<string, { score: string, remarks: string }>>>({});
     const [savingId, setSavingId] = useState<string | null>(null);
     const [showSuccessToast, setShowSuccessToast] = useState(false);
 
@@ -34,25 +35,37 @@ export const JudgeDashboard: React.FC<JudgeDashboardProps> = ({ judgeId }) => {
     const handleScoreChange = (teamId: string, value: string) => {
         setEditingScores(prev => ({
             ...prev,
-            [teamId]: { ...(prev[teamId] || { score: '', remarks: '' }), score: value }
+            [teamId]: {
+                ...(prev[teamId] || {}),
+                [selectedRound]: {
+                    ...(prev[teamId]?.[selectedRound] || { score: '', remarks: '' }),
+                    score: value
+                }
+            }
         }));
     };
 
     const handleRemarksChange = (teamId: string, value: string) => {
         setEditingScores(prev => ({
             ...prev,
-            [teamId]: { ...(prev[teamId] || { score: '', remarks: '' }), remarks: value }
+            [teamId]: {
+                ...(prev[teamId] || {}),
+                [selectedRound]: {
+                    ...(prev[teamId]?.[selectedRound] || { score: '', remarks: '' }),
+                    remarks: value
+                }
+            }
         }));
     };
 
     const handleSaveJudging = async (teamId: string) => {
-        const edit = editingScores[teamId];
+        const edit = editingScores[teamId]?.[selectedRound];
         if (!edit) return;
 
         setSavingId(teamId);
         try {
             const scoreNum = parseInt(edit.score) || 0;
-            await dbService.updateJudging(teamId, scoreNum, edit.remarks);
+            await dbService.updateJudging(teamId, scoreNum, edit.remarks, selectedRound);
             setShowSuccessToast(true);
             setTimeout(() => setShowSuccessToast(false), 3000);
         } catch (e) {
@@ -81,6 +94,23 @@ export const JudgeDashboard: React.FC<JudgeDashboardProps> = ({ judgeId }) => {
         !roomFilter || t.roomNumber.toLowerCase().includes(roomFilter.toLowerCase())
     ).filter(t => t.isCheckedIn); // Judges usually only judge checked-in teams
 
+    const rounds = [
+        { id: 'round1', label: '1st Round: Idea Elevation', color: 'blue' },
+        { id: 'round2', label: '2nd Round: Frontend & Logics', color: 'green' },
+        { id: 'round3', label: '3rd Round: Backend & Technical', color: 'purple' },
+        { id: 'round4', label: '4th Round: Final Round', color: 'amber' }
+    ] as const;
+
+    const getRoundKey = (roundId: string) => {
+        switch (roundId) {
+            case 'round1': return 'ideaElevation';
+            case 'round2': return 'frontendLogics';
+            case 'round3': return 'backendTechnicality';
+            case 'round4': return 'finalRound';
+            default: return '';
+        }
+    };
+
     return (
         <div className="space-y-8 animate-[fadeIn_0.5s_ease-out]">
             {/* Success Toast */}
@@ -107,9 +137,19 @@ export const JudgeDashboard: React.FC<JudgeDashboardProps> = ({ judgeId }) => {
                         </div>
                         <h2 className="text-2xl font-bold text-slate-900">Jury Console</h2>
                         <p className="text-slate-500 font-medium mt-2">Evaluate teams and provide feedback.</p>
-                        <div className="mt-6 inline-flex items-center px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl text-xs font-bold border border-indigo-100">
-                            <Star className="w-4 h-4 mr-2" />
-                            Grading Scale: 0 - 100
+                        <div className="mt-6 flex flex-wrap justify-center gap-2">
+                            {rounds.map(r => (
+                                <button
+                                    key={r.id}
+                                    onClick={() => setSelectedRound(r.id)}
+                                    className={`px-3 py-1.5 rounded-lg text-[10px] font-bold border transition-all ${selectedRound === r.id
+                                            ? 'bg-indigo-600 text-white border-indigo-600 shadow-md'
+                                            : 'bg-white text-slate-500 border-slate-200 hover:border-indigo-300'
+                                        }`}
+                                >
+                                    {r.label.split(':')[0]}
+                                </button>
+                            ))}
                         </div>
                     </div>
                 </div>
@@ -120,7 +160,7 @@ export const JudgeDashboard: React.FC<JudgeDashboardProps> = ({ judgeId }) => {
                 <div className="flex flex-col md:flex-row justify-between items-center gap-6">
                     <div>
                         <h3 className="text-xl font-bold text-slate-900">Project Evaluation</h3>
-                        <p className="text-slate-500 font-medium text-sm">Teams waiting for your professional verdict</p>
+                        <p className="text-indigo-600 font-bold text-sm tracking-wide uppercase">Active: {rounds.find(r => r.id === selectedRound)?.label}</p>
                     </div>
 
                     <div className="relative w-full md:w-96 group">
@@ -141,11 +181,16 @@ export const JudgeDashboard: React.FC<JudgeDashboardProps> = ({ judgeId }) => {
             {/* Teams Grid */}
             <div className="grid grid-cols-1 gap-6">
                 {filteredTeams.map((team) => {
-                    const edit = editingScores[team.id];
-                    const currentScore = edit?.score ?? (team.score?.toString() || '');
-                    const currentRemarks = edit?.remarks ?? (team.judgeRemarks || '');
-                    const isDirty = (edit?.score !== undefined && edit.score !== (team.score?.toString() || '')) ||
-                        (edit?.remarks !== undefined && edit.remarks !== (team.judgeRemarks || ''));
+                    const roundKey = getRoundKey(selectedRound);
+                    const savedScore = (team.roundScores as any)?.[roundKey];
+                    const savedRemarks = (team.roundRemarks as any)?.[roundKey];
+
+                    const edit = editingScores[team.id]?.[selectedRound];
+                    const currentScore = edit?.score ?? (savedScore?.toString() || '');
+                    const currentRemarks = edit?.remarks ?? (savedRemarks || '');
+
+                    const isDirty = (edit?.score !== undefined && edit.score !== (savedScore?.toString() || '')) ||
+                        (edit?.remarks !== undefined && edit.remarks !== (savedRemarks || ''));
 
                     return (
                         <div key={team.id} className="glass-card rounded-3xl overflow-hidden border border-white/60 hover:shadow-xl transition-all duration-300">
@@ -181,6 +226,10 @@ export const JudgeDashboard: React.FC<JudgeDashboardProps> = ({ judgeId }) => {
                                                     No Submission Yet
                                                 </span>
                                             )}
+                                            <span className="inline-flex items-center px-3 py-1.5 rounded-xl bg-amber-50 text-amber-700 text-xs font-bold ring-1 ring-amber-100">
+                                                <Trophy className="w-3.5 h-3.5 mr-1.5" />
+                                                Total Score: {team.score || 0}
+                                            </span>
                                         </div>
 
                                         <div className="bg-slate-50/50 p-4 rounded-2xl border border-slate-100">
@@ -194,7 +243,7 @@ export const JudgeDashboard: React.FC<JudgeDashboardProps> = ({ judgeId }) => {
                                         <div className="flex gap-4">
                                             <div className="flex-1">
                                                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 flex items-center">
-                                                    <Trophy className="w-3 h-3 mr-1.5 text-amber-500" /> Score (0-100)
+                                                    <Trophy className="w-3 h-3 mr-1.5 text-amber-500" /> {rounds.find(r => r.id === selectedRound)?.label.split(':')[1].trim()} Score
                                                 </label>
                                                 <div className="relative">
                                                     <input
@@ -213,12 +262,12 @@ export const JudgeDashboard: React.FC<JudgeDashboardProps> = ({ judgeId }) => {
 
                                         <div>
                                             <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 flex items-center">
-                                                <MessageSquare className="w-3 h-3 mr-1.5 text-indigo-500" /> Jury Remarks
+                                                <MessageSquare className="w-3 h-3 mr-1.5 text-indigo-500" /> Round Feedback
                                             </label>
                                             <textarea
                                                 rows={3}
                                                 className="w-full bg-white border-2 border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all resize-none"
-                                                placeholder="Provide feedback or notes..."
+                                                placeholder={`Feedback for ${rounds.find(r => r.id === selectedRound)?.label.split(':')[1].trim()}...`}
                                                 value={currentRemarks}
                                                 onChange={(e) => handleRemarksChange(team.id, e.target.value)}
                                             />
@@ -228,8 +277,8 @@ export const JudgeDashboard: React.FC<JudgeDashboardProps> = ({ judgeId }) => {
                                             onClick={() => handleSaveJudging(team.id)}
                                             disabled={savingId === team.id || !isDirty}
                                             className={`w-full py-4 rounded-xl flex items-center justify-center space-x-2 font-bold transition-all ${isDirty
-                                                    ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-200 hover:shadow-xl hover:-translate-y-0.5'
-                                                    : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                                                ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-200 hover:shadow-xl hover:-translate-y-0.5'
+                                                : 'bg-slate-100 text-slate-400 cursor-not-allowed'
                                                 }`}
                                         >
                                             {savingId === team.id ? (
@@ -237,7 +286,7 @@ export const JudgeDashboard: React.FC<JudgeDashboardProps> = ({ judgeId }) => {
                                             ) : (
                                                 <>
                                                     <Save className="w-4 h-4" />
-                                                    <span>{team.score !== undefined ? 'Update Marks' : 'Submit Evaluation'}</span>
+                                                    <span>{savedScore !== undefined ? 'Update Round Marks' : 'Submit Round Evaluation'}</span>
                                                 </>
                                             )}
                                         </button>

@@ -19,6 +19,7 @@ export interface Team {
   wifiSsid: string;
   wifiPass: string;
   assignedVolunteerId: string;
+  assignedJudgeId?: string;
   isCheckedIn: boolean;
   checkInTime?: string;
   submissionLink?: string;
@@ -33,6 +34,18 @@ export interface Team {
   gitRepoLink?: string;
   youtubeLiveLink?: string;
   judgeRemarks?: string;
+  roundScores?: {
+    ideaElevation?: number;
+    frontendLogics?: number;
+    backendTechnicality?: number;
+    finalRound?: number;
+  };
+  roundRemarks?: {
+    ideaElevation?: string;
+    frontendLogics?: string;
+    backendTechnicality?: string;
+    finalRound?: string;
+  };
 }
 
 export interface Volunteer {

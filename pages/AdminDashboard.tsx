@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Team, Announcement, HackathonConfig, Volunteer } from '../types';
+import { Team, Announcement, HackathonConfig, Volunteer, User } from '../types';
 import { dbService } from '../services/mockDb';
 import { StatsCard } from '../components/StatsCard';
 import { AnnouncementFeed } from '../components/AnnouncementFeed';
-import { Users, UserCheck, CheckCircle, Megaphone, Plus, Download, Edit2, Send, Eye, ExternalLink, Trophy, Medal, X, Loader2, Search, Filter, BarChart3, Sparkles, Clock, AlertCircle, FileText, Code2 } from 'lucide-react';
+import { Users, UserCheck, CheckCircle, Megaphone, Plus, Download, Edit2, Send, Eye, ExternalLink, Trophy, Medal, X, Loader2, Search, Filter, BarChart3, Sparkles, Clock, AlertCircle, FileText, Code2, Calculator, Info } from 'lucide-react';
 
 import { useRealtimeTeams, useRealtimeAnnouncements, useRealtimeNotifications } from '../hooks/useRealtime';
 
@@ -14,8 +14,11 @@ export const AdminDashboard: React.FC = () => {
     const { notifications, addNotification } = useRealtimeNotifications();
 
     const [volunteers, setVolunteers] = useState<Volunteer[]>([]);
+    const [judges, setJudges] = useState<User[]>([]);
     const [newAnnouncement, setNewAnnouncement] = useState('');
     const [activeTab, setActiveTab] = useState<'overview' | 'teams' | 'volunteers' | 'submissions' | 'leaderboard'>('overview');
+    const [selectedTeamForDetails, setSelectedTeamForDetails] = useState<Team | null>(null);
+    const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
     const [isPosting, setIsPosting] = useState(false);
     const [showSuccessToast, setShowSuccessToast] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
@@ -23,13 +26,17 @@ export const AdminDashboard: React.FC = () => {
     const [editingTeamId, setEditingTeamId] = useState<string | null>(null);
     const [submissionFilter, setSubmissionFilter] = useState<'all' | 'reviewed' | 'pending'>('all');
 
-    // Fetch volunteers only (teams/announcements handled by hooks)
-    const fetchVolunteers = async () => {
-        setVolunteers(await dbService.getVolunteers());
+    const fetchInitialData = async () => {
+        const [vols, jds] = await Promise.all([
+            dbService.getVolunteers(),
+            dbService.getJudges()
+        ]);
+        setVolunteers(vols);
+        setJudges(jds);
     };
 
     useEffect(() => {
-        fetchVolunteers();
+        fetchInitialData();
     }, []);
 
     const handlePostAnnouncement = async (e: React.FormEvent) => {
@@ -76,13 +83,16 @@ export const AdminDashboard: React.FC = () => {
             "Team ID", "Name", "Email", "Members", "Problem Statement",
             "Room", "Checked In",
             "Main Project", "Git Repo", "YouTube Demo", "Submitted At",
-            "Volunteer Associated", "Review Status", "Score"
+            "Volunteer Associated", "Judge Associated", "Review Status",
+            "Idea Elevation", "Frontend & Logic", "Backend & Tech", "Final Round", "Total Score"
         ];
 
         const rows = teams.map(t => {
             const volunteer = volunteers.find(v => v.id === t.assignedVolunteerId);
+            const judge = judges.find(j => j.id === t.assignedJudgeId);
             const memberNames = t.members ? t.members.map(m => m.name).join("; ") : "";
             const volunteerName = volunteer ? volunteer.name : "Unassigned";
+            const judgeName = judge ? judge.name : "Unassigned";
             const status = t.submissionViewed ? "Reviewed" : "Pending";
             const submittedAt = t.submissionTime ? new Date(t.submissionTime).toLocaleString().replace(/,/g, " ") : "Not Submitted";
 
@@ -102,7 +112,12 @@ export const AdminDashboard: React.FC = () => {
                 escape(t.youtubeLiveLink),
                 submittedAt,
                 escape(volunteerName),
+                escape(judgeName),
                 status,
+                t.roundScores?.ideaElevation || 0,
+                t.roundScores?.frontendLogics || 0,
+                t.roundScores?.backendTechnicality || 0,
+                t.roundScores?.finalRound || 0,
                 t.score || 0
             ].join(",");
         });
@@ -120,6 +135,28 @@ export const AdminDashboard: React.FC = () => {
         setSuccessMessage('Comprehensive data exported successfully!');
         setShowSuccessToast(true);
         setTimeout(() => setShowSuccessToast(false), 3000);
+    };
+
+    const handleAssignVolunteer = async (teamId: string, volunteerId: string) => {
+        try {
+            await dbService.assignVolunteer(teamId, volunteerId);
+            setSuccessMessage('Volunteer assigned successfully!');
+            setShowSuccessToast(true);
+            setTimeout(() => setShowSuccessToast(false), 3000);
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
+    const handleAssignJudge = async (teamId: string, judgeId: string) => {
+        try {
+            await dbService.assignJudge(teamId, judgeId);
+            setSuccessMessage('Judge assigned successfully!');
+            setShowSuccessToast(true);
+            setTimeout(() => setShowSuccessToast(false), 3000);
+        } catch (e) {
+            console.error(e);
+        }
     };
 
     const handleAddTeam = async () => {
@@ -246,6 +283,123 @@ export const AdminDashboard: React.FC = () => {
                     );
                 })}
             </div>
+
+            {/* Team Details Modal */}
+            {isDetailsModalOpen && selectedTeamForDetails && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]" onClick={() => setIsDetailsModalOpen(false)}></div>
+                    <div className="relative w-full max-w-2xl bg-white rounded-[2.5rem] shadow-2xl overflow-hidden animate-[slideUp_0.3s_ease-out] border border-white">
+                        {/* Header */}
+                        <div className="px-8 py-6 bg-gradient-to-r from-violet-600 to-indigo-600 text-white relative">
+                            <button
+                                onClick={() => setIsDetailsModalOpen(false)}
+                                className="absolute top-6 right-6 p-2 rounded-xl hover:bg-white/10 transition-colors"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
+                            <div className="flex items-center space-x-4">
+                                <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center shadow-lg">
+                                    <span className="text-2xl font-black">{selectedTeamForDetails.name.charAt(0)}</span>
+                                </div>
+                                <div>
+                                    <h2 className="text-2xl font-black tracking-tight">{selectedTeamForDetails.name}</h2>
+                                    <p className="text-indigo-100 font-medium opacity-90">{selectedTeamForDetails.problemStatement}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Content */}
+                        <div className="p-8">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                {/* Left Side: Round Scores */}
+                                <div className="space-y-4">
+                                    <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest flex items-center">
+                                        <Trophy className="w-4 h-4 mr-2" /> Evaluation Breakdown
+                                    </h3>
+
+                                    {[
+                                        { label: 'R1: Idea Elevation', key: 'ideaElevation' },
+                                        { label: 'R2: Frontend & Logics', key: 'frontendLogics' },
+                                        { label: 'R3: Backend & Tech', key: 'backendTechnicality' },
+                                        { label: 'R4: Final Round', key: 'finalRound' }
+                                    ].map((round) => (
+                                        <div key={round.key} className="bg-slate-50 p-4 rounded-2xl border border-slate-100 hover:border-violet-200 transition-all group">
+                                            <div className="flex justify-between items-center mb-2">
+                                                <span className="text-xs font-bold text-slate-500">{round.label}</span>
+                                                <span className="px-3 py-1 rounded-lg bg-white text-violet-600 font-bold text-sm shadow-sm border border-slate-100">
+                                                    {(selectedTeamForDetails.roundScores as any)?.[round.key] || 0} / 100
+                                                </span>
+                                            </div>
+                                            <p className="text-xs text-slate-400 italic leading-relaxed">
+                                                {(selectedTeamForDetails.roundRemarks as any)?.[round.key] || 'No specific remarks for this round.'}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Right Side: Summary Stats */}
+                                <div className="space-y-6">
+                                    <div className="bg-violet-600 rounded-3xl p-6 text-white shadow-xl shadow-violet-200 relative overflow-hidden group">
+                                        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
+                                            <Calculator className="w-16 h-16" />
+                                        </div>
+                                        <div className="relative z-10">
+                                            <h4 className="text-xs font-bold text-violet-200 uppercase tracking-wider mb-4">Final Summary</h4>
+                                            <div className="flex items-end justify-between">
+                                                <div>
+                                                    <span className="block text-4xl font-black leading-none">{selectedTeamForDetails.score || 0}</span>
+                                                    <span className="text-[10px] font-bold text-violet-200 uppercase">Total Marks</span>
+                                                </div>
+                                                <div className="text-right">
+                                                    <span className="block text-2xl font-black leading-none">
+                                                        {((selectedTeamForDetails.score || 0) / 4).toFixed(1)}
+                                                    </span>
+                                                    <span className="text-[10px] font-bold text-violet-200 uppercase">Average</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="glass-card rounded-2xl p-5 border border-slate-100">
+                                        <h4 className="text-xs font-black text-slate-400 uppercase tracking-wider mb-3 flex items-center">
+                                            <UserCheck className="w-3.5 h-3.5 mr-2" /> Assigned Evaluator
+                                        </h4>
+                                        <div className="flex items-center space-x-3">
+                                            <div className="w-10 h-10 rounded-xl bg-violet-100 text-violet-600 flex items-center justify-center font-bold">
+                                                {judges.find(j => j.id === selectedTeamForDetails.assignedJudgeId)?.name.charAt(0) || '?'}
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-bold text-slate-900">
+                                                    {judges.find(j => j.id === selectedTeamForDetails.assignedJudgeId)?.name || 'Not assigned'}
+                                                </p>
+                                                <p className="text-[10px] text-slate-500">Official Hackathon Jury</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-amber-50 rounded-2xl p-5 border border-amber-100">
+                                        <h4 className="text-xs font-black text-amber-600 uppercase tracking-wider mb-2 flex items-center">
+                                            <Info className="w-3.5 h-3.5 mr-2" /> General Remarks
+                                        </h4>
+                                        <p className="text-xs text-amber-800 font-medium leading-relaxed">
+                                            {selectedTeamForDetails.judgeRemarks || "The jury hasn't provided overall comments yet."}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="px-8 py-4 bg-slate-50 border-t border-slate-100 flex justify-end">
+                            <button
+                                onClick={() => setIsDetailsModalOpen(false)}
+                                className="px-6 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl transition-all"
+                            >
+                                Close Overview
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Overview Tab */}
             {activeTab === 'overview' && (
@@ -375,7 +529,8 @@ export const AdminDashboard: React.FC = () => {
                                     <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Git Repo</th>
                                     <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">YouTube</th>
                                     <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Location</th>
-                                    <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Volunteer</th>
+                                    <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Assigned Volunteer</th>
+                                    <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Assigned Judge</th>
                                     <th className="px-6 py-4"></th>
                                 </tr>
                             </thead>
@@ -383,12 +538,18 @@ export const AdminDashboard: React.FC = () => {
                                 {filteredTeams.map((team) => (
                                     <tr key={team.id} className="hover:bg-slate-50/80 transition-colors group">
                                         <td className="px-6 sm:px-8 py-5 whitespace-nowrap">
-                                            <div className="flex items-center space-x-3">
-                                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-100 to-indigo-100 flex items-center justify-center text-violet-600 font-bold">
+                                            <div
+                                                className="flex items-center space-x-3 cursor-pointer group/name"
+                                                onClick={() => {
+                                                    setSelectedTeamForDetails(team);
+                                                    setIsDetailsModalOpen(true);
+                                                }}
+                                            >
+                                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-100 to-indigo-100 flex items-center justify-center text-violet-600 font-bold group-hover/name:scale-110 transition-transform">
                                                     {team.name.charAt(0)}
                                                 </div>
                                                 <div>
-                                                    <div className="text-sm font-bold text-slate-900">{team.name}</div>
+                                                    <div className="text-sm font-bold text-slate-900 group-hover/name:text-violet-600 transition-colors">{team.name}</div>
                                                     <div className="text-xs text-slate-500 mt-0.5">{team.email}</div>
                                                 </div>
                                             </div>
@@ -483,10 +644,29 @@ export const AdminDashboard: React.FC = () => {
                                                 <span className="bg-slate-100 px-2.5 py-1 rounded-lg text-slate-700">{team.tableNumber}</span>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-5 whitespace-nowrap text-sm font-medium">
-                                            {volunteers.find(v => v.id === team.assignedVolunteerId)?.name || (
-                                                <span className="text-slate-400 italic">Unassigned</span>
-                                            )}
+                                        <td className="px-6 py-5 whitespace-nowrap">
+                                            <select
+                                                value={team.assignedVolunteerId || ''}
+                                                onChange={(e) => handleAssignVolunteer(team.id, e.target.value)}
+                                                className="bg-transparent text-sm font-medium text-slate-700 outline-none border-b-2 border-transparent hover:border-slate-200 focus:border-violet-500 transition-all cursor-pointer py-1"
+                                            >
+                                                <option value="">Unassigned</option>
+                                                {volunteers.map(v => (
+                                                    <option key={v.id} value={v.id}>{v.name}</option>
+                                                ))}
+                                            </select>
+                                        </td>
+                                        <td className="px-6 py-5 whitespace-nowrap">
+                                            <select
+                                                value={team.assignedJudgeId || ''}
+                                                onChange={(e) => handleAssignJudge(team.id, e.target.value)}
+                                                className="bg-transparent text-sm font-medium text-slate-700 outline-none border-b-2 border-transparent hover:border-slate-200 focus:border-violet-500 transition-all cursor-pointer py-1"
+                                            >
+                                                <option value="">Unassigned</option>
+                                                {judges.map(j => (
+                                                    <option key={j.id} value={j.id}>{j.name}</option>
+                                                ))}
+                                            </select>
                                         </td>
                                         <td className="px-6 py-5 whitespace-nowrap text-right">
                                             <button className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-colors opacity-0 group-hover:opacity-100">
@@ -593,7 +773,7 @@ export const AdminDashboard: React.FC = () => {
                                     <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider w-1/3">Team Details</th>
                                     <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Submissions</th>
                                     <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
-                                    <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Evaluation</th>
+                                    <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Total Score</th>
                                     <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Submitted At</th>
                                 </tr>
                             </thead>
@@ -608,12 +788,18 @@ export const AdminDashboard: React.FC = () => {
                                     .map((team) => (
                                         <tr key={team.id} className="hover:bg-slate-50/80 transition-colors">
                                             <td className="px-6 py-5">
-                                                <div className="flex items-start space-x-4">
-                                                    <div className="w-12 h-12 flex-shrink-0 rounded-2xl bg-gradient-to-br from-violet-100 to-indigo-100 flex items-center justify-center text-violet-600 font-bold text-xl shadow-sm">
+                                                <div
+                                                    className="flex items-start space-x-4 cursor-pointer group/name"
+                                                    onClick={() => {
+                                                        setSelectedTeamForDetails(team);
+                                                        setIsDetailsModalOpen(true);
+                                                    }}
+                                                >
+                                                    <div className="w-12 h-12 flex-shrink-0 rounded-2xl bg-gradient-to-br from-violet-100 to-indigo-100 flex items-center justify-center text-violet-600 font-bold text-xl shadow-sm group-hover/name:scale-110 transition-transform">
                                                         {team.name.charAt(0)}
                                                     </div>
                                                     <div className="flex-1 min-w-0">
-                                                        <div className="text-base font-bold text-slate-900 leading-tight">{team.name}</div>
+                                                        <div className="text-base font-bold text-slate-900 leading-tight group-hover/name:text-violet-600 transition-colors uppercase tracking-tight">{team.name}</div>
                                                         <div className="text-sm text-slate-500 mt-0.5">{team.email}</div>
 
                                                         <div className="mt-3 flex items-center space-x-2">
@@ -738,38 +924,15 @@ export const AdminDashboard: React.FC = () => {
                                             </td>
                                             <td className="px-6 py-5 whitespace-nowrap align-top pt-6">
                                                 <div className="flex items-center space-x-2">
-                                                    <div className="relative">
-                                                        <input
-                                                            type="number"
-                                                            defaultValue={team.score || ''}
-                                                            onBlur={(e) => handleScoreUpdate(team.id, e.target.value)}
-                                                            onKeyDown={(e) => {
-                                                                if (e.key === 'Enter') {
-                                                                    handleScoreUpdate(team.id, (e.target as HTMLInputElement).value);
-                                                                    (e.target as HTMLInputElement).blur();
-                                                                }
-                                                            }}
-                                                            placeholder="0"
-                                                            className="w-20 pl-3 pr-3 py-2 border-2 border-slate-200 rounded-xl text-sm font-bold text-center focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 outline-none transition-all"
-                                                        />
-                                                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-xs">
-                                                            /100
-                                                        </div>
+                                                    <div className="w-16 px-3 py-2 border-2 border-slate-200 rounded-xl text-sm font-bold text-center bg-slate-50 text-slate-700">
+                                                        {team.score || 0}
                                                     </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-5 whitespace-nowrap align-top pt-8">
-                                                <div className="max-w-[150px] truncate group-hover:whitespace-normal text-xs text-slate-500 italic">
-                                                    {team.judgeRemarks || <span className="text-slate-300">No remarks</span>}
                                                 </div>
                                             </td>
                                             <td className="px-6 py-5 whitespace-nowrap text-sm text-slate-500 align-top pt-8">
                                                 <div className="flex items-center">
                                                     <Clock className="w-4 h-4 mr-2 text-slate-400" />
                                                     {team.submissionTime ? new Date(team.submissionTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'}
-                                                    <div className="text-xs text-slate-400 ml-1">
-                                                        {team.submissionTime ? new Date(team.submissionTime).toLocaleDateString() : ''}
-                                                    </div>
                                                 </div>
                                             </td>
                                         </tr>
@@ -848,13 +1011,24 @@ export const AdminDashboard: React.FC = () => {
                                                     )}
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-5 whitespace-nowrap">
+                                            <td
+                                                className="px-6 py-5 whitespace-nowrap cursor-pointer group/row"
+                                                onClick={() => {
+                                                    setSelectedTeamForDetails(team);
+                                                    setIsDetailsModalOpen(true);
+                                                }}
+                                            >
                                                 <div className="flex items-center space-x-3">
-                                                    <div className={`w-10 h-10 rounded-xl ${isTop3 ? 'bg-gradient-to-br from-violet-500 to-indigo-500 text-white' : 'bg-slate-100 text-slate-600'} flex items-center justify-center font-bold`}>
+                                                    <div className={`w-10 h-10 rounded-xl ${isTop3 ? 'bg-gradient-to-br from-violet-500 to-indigo-500 text-white' : 'bg-slate-100 text-slate-600'} flex items-center justify-center font-bold group-hover/row:scale-110 transition-transform`}>
                                                         {team.name.charAt(0)}
                                                     </div>
                                                     <div>
-                                                        <div className={`text-sm font-bold ${isTop3 ? 'text-slate-900' : 'text-slate-700'}`}>{team.name}</div>
+                                                        <div className={`text-sm font-bold flex items-center ${isTop3 ? 'text-slate-900' : 'text-slate-700'}`}>
+                                                            {team.name}
+                                                            <div className="ml-2 opacity-0 group-hover/row:opacity-100 transition-opacity">
+                                                                <Calculator className="w-3.5 h-3.5 text-violet-500" />
+                                                            </div>
+                                                        </div>
                                                         <div className="text-xs text-slate-500 mt-0.5">{team.members.length} Members</div>
                                                     </div>
                                                 </div>
@@ -878,19 +1052,10 @@ export const AdminDashboard: React.FC = () => {
                                                 )}
                                             </td>
                                             <td className="px-6 py-5 whitespace-nowrap">
-                                                <input
-                                                    type="number"
-                                                    min="0"
-                                                    max="100"
-                                                    value={team.score || ''}
-                                                    onChange={(e) => handleScoreUpdate(team.id, e.target.value)}
-                                                    className={`w-20 px-3 py-2.5 border-2 rounded-xl text-sm font-bold text-center focus:ring-4 focus:ring-violet-500/10 focus:border-violet-500 outline-none transition-all ${isTop3 ? 'border-amber-200 bg-amber-50 text-amber-700' : 'border-slate-200 bg-white'
-                                                        }`}
-                                                    placeholder="0"
-                                                />
+                                                <div className={`text-base font-black ${isTop3 ? 'text-violet-600' : 'text-slate-900'}`}>{team.score || 0}</div>
                                             </td>
                                             <td className="px-6 py-5 whitespace-nowrap">
-                                                <div className="text-xs text-slate-500 italic max-w-[200px] truncate" title={team.judgeRemarks}>
+                                                <div className="text-[10px] text-slate-500 italic max-w-[150px] truncate" title={team.judgeRemarks}>
                                                     {team.judgeRemarks || <span className="text-slate-300">No remarks</span>}
                                                 </div>
                                             </td>

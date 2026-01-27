@@ -234,6 +234,10 @@ export const dbService = {
     return dbService.getDb().volunteers;
   },
 
+  async getJudges(): Promise<User[]> {
+    return dbService.getDb().users.filter(u => u.role === 'judge');
+  },
+
   async updateVolunteer(updatedVolunteer: Volunteer): Promise<void> {
     const db = dbService.getDb();
     db.volunteers = db.volunteers.map(v => v.id === updatedVolunteer.id ? updatedVolunteer : v);
@@ -424,6 +428,17 @@ export const dbService = {
     }
   },
 
+  async assignJudge(teamId: string, judgeId: string): Promise<void> {
+    const db = dbService.getDb();
+    const team = db.teams.find(t => t.id === teamId);
+    if (team) {
+      team.assignedJudgeId = judgeId;
+      dbService.saveDb(db);
+      // We could add a wsService call here if needed, but for now simple update is fine
+      wsService.teamUpdated(team);
+    }
+  },
+
   // Judging methods
   async getTeamsByRoom(room: string): Promise<Team[]> {
     await delay(200);
@@ -432,13 +447,42 @@ export const dbService = {
     return db.teams.filter(t => t.roomNumber.toLowerCase().includes(room.toLowerCase()));
   },
 
-  async updateJudging(teamId: string, score: number, remarks: string): Promise<void> {
+  async updateJudging(teamId: string, score: number, remarks: string, round?: 'round1' | 'round2' | 'round3' | 'round4'): Promise<void> {
     await delay(300);
     const db = dbService.getDb();
     const team = db.teams.find(t => t.id === teamId);
     if (team) {
-      team.score = score;
-      team.judgeRemarks = remarks;
+      if (round) {
+        if (!team.roundScores) team.roundScores = {};
+        if (!team.roundRemarks) team.roundRemarks = {};
+
+        const roundKeyMap = {
+          'round1': 'ideaElevation',
+          'round2': 'frontendLogics',
+          'round3': 'backendTechnicality',
+          'round4': 'finalRound'
+        } as const;
+
+        const key = roundKeyMap[round];
+        (team.roundScores as any)[key] = score;
+        (team.roundRemarks as any)[key] = remarks;
+
+        // Update total score as sum of rounds
+        team.score = (team.roundScores.ideaElevation || 0) +
+          (team.roundScores.frontendLogics || 0) +
+          (team.roundScores.backendTechnicality || 0) +
+          (team.roundScores.finalRound || 0);
+
+        // Update judge remarks to show a summary or the latest round?
+        // Let's keep the main judgeRemarks as a general feedback or from the final round
+        if (round === 'round4') {
+          team.judgeRemarks = remarks;
+        }
+      } else {
+        team.score = score;
+        team.judgeRemarks = remarks;
+      }
+
       dbService.saveDb(db);
       wsService.scoreUpdated(team);
     }
