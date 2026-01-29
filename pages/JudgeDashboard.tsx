@@ -2,12 +2,56 @@ import React, { useEffect, useState } from 'react';
 import { Team, HackathonConfig } from '../types';
 import { dbService } from '../services/mockDb';
 import { Timer } from '../components/Timer';
-import { Search, MapPin, Loader2, Users, CheckCircle, ExternalLink, Trophy, Star, Award, MessageSquare, Save } from 'lucide-react';
+import { Search, MapPin, Loader2, Users, CheckCircle, ExternalLink, Trophy, Star, Award, MessageSquare, Save, ChevronDown, ClipboardList, Info } from 'lucide-react';
+
 import { useRealtimeTeams } from '../hooks/useRealtime';
 
 interface JudgeDashboardProps {
     judgeId: string;
 }
+
+const ROUND_CRITERIA = {
+    round1: {
+        focus: 'Thinking, innovation, clarity',
+        items: [
+            { title: 'Problem & Target Audience', question: 'How clearly is the problem defined and the target audience identified?' },
+            { title: 'Innovation & Uniqueness', question: 'How original and innovative is the idea compared to existing solutions?' },
+            { title: 'Solution Feasibility', question: 'Is the idea realistically achievable within given constraints?' },
+            { title: 'Real-World Impact', question: 'How impactful and relevant is the solution to real-world users?' },
+            { title: 'Presentation & Explanation', question: 'How clearly and confidently did the team explain their idea?' },
+        ]
+    },
+    round2: {
+        focus: 'UI, UX, frontend engineering',
+        items: [
+            { title: 'UI/UX & Responsiveness', question: 'How visually appealing, user-friendly, and responsive is the interface?' },
+            { title: 'Frontend Logic & State', question: 'How well is the frontend logic and state handling implemented?' },
+            { title: 'User Flow & Navigation', question: 'Is the user journey smooth, intuitive, and logical?' },
+            { title: 'Error Handling & Edge Cases', question: 'How well does the frontend handle errors and invalid inputs?' },
+            { title: 'Performance & Optimization', question: 'How efficient and responsive is the frontend application?' },
+        ]
+    },
+    round3: {
+        focus: 'Engineering depth & correctness',
+        items: [
+            { title: 'Architecture & API Design', question: 'How well-structured is the backend architecture and API design?' },
+            { title: 'Database Design & Usage', question: 'How effective is the database schema, relationships, and queries?' },
+            { title: 'Security & Authentication', question: 'How well are security concerns and access control handled?' },
+            { title: 'Code Quality & Scalability', question: 'Is the backend code clean, maintainable, and scalable?' },
+            { title: 'Error Handling & Reliability', question: 'How robust is the backend in handling failures?' },
+        ]
+    },
+    round4: {
+        focus: 'Final decision & winner selection',
+        items: [
+            { title: 'Overall Completeness', question: 'How complete and functional is the final full-stack solution?' },
+            { title: 'Technical Depth & Execution', question: 'How strong is the technical implementation across the stack?' },
+            { title: 'Innovation vs Execution', question: 'How well does the team balance creativity with practical execution?' },
+            { title: 'Demo & Team Understanding', question: 'How effective was the demo and how well did they handle Q&A?' },
+            { title: 'Future Scope & Scaling', question: 'How promising is the solution in terms of future improvements?' },
+        ]
+    }
+};
 
 export const JudgeDashboard: React.FC<JudgeDashboardProps> = ({ judgeId }) => {
     const { teams, loading: teamsLoading } = useRealtimeTeams();
@@ -15,7 +59,11 @@ export const JudgeDashboard: React.FC<JudgeDashboardProps> = ({ judgeId }) => {
     const [loadingConfig, setLoadingConfig] = useState(true);
     const [roomFilter, setRoomFilter] = useState('');
     const [selectedRound, setSelectedRound] = useState<'round1' | 'round2' | 'round3' | 'round4'>('round1');
-    const [editingScores, setEditingScores] = useState<Record<string, Record<string, { score: string, remarks: string }>>>({});
+    const [editingScores, setEditingScores] = useState<Record<string, Record<string, {
+        score: string,
+        remarks: string,
+        criteriaScores?: number[]
+    }>>>({});
     const [savingId, setSavingId] = useState<string | null>(null);
     const [showSuccessToast, setShowSuccessToast] = useState(false);
 
@@ -56,6 +104,37 @@ export const JudgeDashboard: React.FC<JudgeDashboardProps> = ({ judgeId }) => {
                 }
             }
         }));
+    };
+
+    const handleCriteriaScoreChange = (teamId: string, index: number, value: number) => {
+        setEditingScores(prev => {
+            const currentRoundEdits = prev[teamId]?.[selectedRound] || { score: '0', remarks: '' };
+            const criteriaCount = ROUND_CRITERIA[selectedRound].items.length;
+
+            let currentCriteriaScores = currentRoundEdits.criteriaScores
+                ? [...currentRoundEdits.criteriaScores]
+                : new Array(criteriaCount).fill(0);
+
+            if (currentCriteriaScores.length !== criteriaCount) {
+                currentCriteriaScores = new Array(criteriaCount).fill(0);
+            }
+
+            currentCriteriaScores[index] = value;
+
+            const sum = currentCriteriaScores.reduce((a, b) => a + b, 0);
+
+            return {
+                ...prev,
+                [teamId]: {
+                    ...(prev[teamId] || {}),
+                    [selectedRound]: {
+                        ...currentRoundEdits,
+                        criteriaScores: currentCriteriaScores,
+                        score: sum.toString()
+                    }
+                }
+            };
+        });
     };
 
     const handleSaveJudging = async (teamId: string) => {
@@ -137,19 +216,25 @@ export const JudgeDashboard: React.FC<JudgeDashboardProps> = ({ judgeId }) => {
                         </div>
                         <h2 className="text-2xl font-bold text-slate-900">Jury Console</h2>
                         <p className="text-slate-500 font-medium mt-2">Evaluate teams and provide feedback.</p>
-                        <div className="mt-6 flex flex-wrap justify-center gap-2">
-                            {rounds.map(r => (
-                                <button
-                                    key={r.id}
-                                    onClick={() => setSelectedRound(r.id)}
-                                    className={`px-3 py-1.5 rounded-lg text-[10px] font-bold border transition-all ${selectedRound === r.id
-                                            ? 'bg-indigo-600 text-white border-indigo-600 shadow-md'
-                                            : 'bg-white text-slate-500 border-slate-200 hover:border-indigo-300'
-                                        }`}
+                        <div className="mt-8 w-full text-left">
+                            <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 flex justify-between">
+                                <span>Select Active Round</span>
+                                <span className="text-indigo-500 lowercase font-medium">Focus: {ROUND_CRITERIA[selectedRound].focus}</span>
+                            </label>
+                            <div className="relative group">
+                                <select
+                                    value={selectedRound}
+                                    onChange={(e) => setSelectedRound(e.target.value as any)}
+                                    className="w-full appearance-none bg-slate-50 border-2 border-slate-100 rounded-xl px-4 py-3 pr-10 font-bold text-slate-700 focus:border-indigo-500 focus:bg-white transition-all outline-none cursor-pointer"
                                 >
-                                    {r.label.split(':')[0]}
-                                </button>
-                            ))}
+                                    {rounds.map(r => (
+                                        <option key={r.id} value={r.id}>
+                                            {r.label}
+                                        </option>
+                                    ))}
+                                </select>
+                                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none transition-transform group-focus-within:rotate-180" />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -165,15 +250,19 @@ export const JudgeDashboard: React.FC<JudgeDashboardProps> = ({ judgeId }) => {
 
                     <div className="relative w-full md:w-96 group">
                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors group-focus-within:text-indigo-600 text-slate-400">
-                            <Search className="h-5 w-5" />
+                            <MapPin className="h-5 w-5" />
                         </div>
-                        <input
-                            type="text"
-                            className="block w-full pl-12 pr-4 py-4 border-2 border-slate-200 rounded-2xl bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all font-medium text-slate-900 placeholder:text-slate-400"
-                            placeholder="Search by Room Number (e.g. 204)..."
+                        <select
+                            className="block w-full pl-12 pr-10 py-4 border-2 border-slate-200 rounded-2xl bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all font-bold text-slate-900 appearance-none cursor-pointer"
                             value={roomFilter}
                             onChange={(e) => setRoomFilter(e.target.value)}
-                        />
+                        >
+                            <option value="">All Rooms / Halls</option>
+                            {Array.from(new Set(teams.filter(t => t.isCheckedIn).map(t => t.roomNumber))).sort().map(room => (
+                                <option key={room} value={room}>Room: {room}</option>
+                            ))}
+                        </select>
+                        <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none transition-transform group-focus-within:rotate-180" />
                     </div>
                 </div>
             </div>
@@ -232,9 +321,53 @@ export const JudgeDashboard: React.FC<JudgeDashboardProps> = ({ judgeId }) => {
                                             </span>
                                         </div>
 
-                                        <div className="bg-slate-50/50 p-4 rounded-2xl border border-slate-100">
+                                        <div className="bg-slate-50/50 p-4 rounded-2xl border border-slate-100 mb-6">
                                             <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Problem Statement</p>
                                             <p className="text-sm text-slate-700 font-medium leading-relaxed italic">"{team.problemStatement}"</p>
+                                        </div>
+
+                                        {/* Evaluation Checklist */}
+                                        <div className="space-y-3">
+                                            <div className="flex items-center justify-between">
+                                                <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center">
+                                                    <ClipboardList className="w-3.5 h-3.5 mr-2 text-indigo-500" /> Evaluation Checklist
+                                                </h5>
+                                                <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">
+                                                    {ROUND_CRITERIA[selectedRound].items.length} points
+                                                </span>
+                                            </div>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                {ROUND_CRITERIA[selectedRound].items.map((criterion, idx) => {
+                                                    const criterionScore = edit?.criteriaScores?.[idx] || 0;
+                                                    return (
+                                                        <div key={idx} className="group relative bg-white border border-slate-100 p-3 rounded-xl hover:border-indigo-200 hover:shadow-sm transition-all">
+                                                            <div className="flex items-start gap-2">
+                                                                <div className="mt-0.5 w-4 h-4 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-500 group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-colors">
+                                                                    {idx + 1}
+                                                                </div>
+                                                                <div className="flex-1">
+                                                                    <p className="text-xs font-bold text-slate-700 group-hover:text-indigo-900 transition-colors uppercase tracking-tight">{criterion.title}</p>
+                                                                    <p className="text-[10px] text-slate-400 font-medium mt-0.5 leading-tight mb-2">{criterion.question}</p>
+
+                                                                    <div className="relative">
+                                                                        <select
+                                                                            value={criterionScore}
+                                                                            onChange={(e) => handleCriteriaScoreChange(team.id, idx, parseInt(e.target.value))}
+                                                                            className="w-full appearance-none bg-slate-50 border border-slate-100 rounded-lg px-3 py-1.5 text-xs font-bold text-indigo-600 focus:border-indigo-500 focus:bg-white outline-none cursor-pointer transition-all"
+                                                                        >
+                                                                            <option value="0">Select Score</option>
+                                                                            {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map(s => (
+                                                                                <option key={s} value={s}>{s} / 20</option>
+                                                                            ))}
+                                                                        </select>
+                                                                        <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 pointer-events-none" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
                                         </div>
                                     </div>
 
