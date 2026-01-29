@@ -9,12 +9,16 @@ import { AdminDashboard } from './pages/AdminDashboard';
 import { JudgeDashboard } from './pages/JudgeDashboard';
 import { Layout } from './components/Layout';
 import { wsService } from './services/websocket';
+import usePWA, { OfflineIndicator, InstallPrompt } from './hooks/usePWA';
 
 type AppView = 'landing' | 'login' | 'register' | 'dashboard';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [currentView, setCurrentView] = useState<AppView>('landing');
+
+  // PWA functionality
+  const { isOnline, isInstallable, install, dismissInstallPrompt } = usePWA();
 
   useEffect(() => {
     // Initialize WebSocket connection
@@ -68,36 +72,70 @@ const App: React.FC = () => {
     setCurrentView('landing');
   };
 
+  // PWA Components that appear on all pages
+  const PWAOverlays = (
+    <>
+      <OfflineIndicator isOnline={isOnline} />
+      <InstallPrompt
+        isInstallable={isInstallable}
+        onInstall={install}
+        onDismiss={dismissInstallPrompt}
+      />
+    </>
+  );
 
   // Show landing page
   if (currentView === 'landing' && !user) {
-    return <LandingPage onGetStarted={handleShowLogin} />;
+    return (
+      <>
+        {PWAOverlays}
+        <LandingPage onGetStarted={handleShowLogin} />
+      </>
+    );
   }
 
   // Show registration page
   if (currentView === 'register') {
-    return <RegisterPage onRegister={handleRegister} onBack={handleBackToLanding} />;
+    return (
+      <>
+        {PWAOverlays}
+        <RegisterPage onRegister={handleRegister} onBack={handleBackToLanding} />
+      </>
+    );
   }
 
   // Show login page
   if (currentView === 'login' && !user) {
-    return <LoginPage onLogin={handleLogin} />;
+    return (
+      <>
+        {PWAOverlays}
+        <LoginPage onLogin={handleLogin} />
+      </>
+    );
   }
 
   // Show dashboard based on user role
   if (user) {
     return (
-      <Layout user={user} onLogout={handleLogout}>
-        {user.role === 'team' && <TeamDashboard teamId={user.id} />}
-        {user.role === 'volunteer' && <VolunteerDashboard volunteerId={user.id} />}
-        {user.role === 'admin' && <AdminDashboard />}
-        {user.role === 'judge' && <JudgeDashboard judgeId={user.id} />}
-      </Layout>
+      <>
+        {PWAOverlays}
+        <Layout user={user} onLogout={handleLogout}>
+          {user.role === 'team' && <TeamDashboard teamId={user.id} />}
+          {user.role === 'volunteer' && <VolunteerDashboard volunteerId={user.id} />}
+          {user.role === 'admin' && <AdminDashboard />}
+          {user.role === 'judge' && <JudgeDashboard judgeId={user.id} />}
+        </Layout>
+      </>
     );
   }
 
   // Fallback to login
-  return <LoginPage onLogin={handleLogin} />;
+  return (
+    <>
+      {PWAOverlays}
+      <LoginPage onLogin={handleLogin} />
+    </>
+  );
 };
 
 export default App;
