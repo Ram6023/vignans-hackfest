@@ -649,18 +649,24 @@ export const VolunteerDashboard: React.FC<VolunteerDashboardProps> = ({ voluntee
 
                     {/* Completed */}
                     {team.onboardingStatus === 'completed' && (
-                      <div className="flex flex-wrap items-center gap-4 w-full">
-                        <div className="flex items-center gap-2 text-violet-600 bg-violet-100 px-4 py-2 rounded-lg">
+                      <div className="flex items-center justify-between w-full gap-4">
+                        <div className="flex items-center gap-2 text-violet-600 bg-violet-100 px-4 py-2.5 rounded-xl border border-violet-200">
                           <CheckCircle className="w-5 h-5" />
                           <span className="font-bold">Session Completed</span>
                         </div>
-                        <div className="flex gap-4 ml-auto text-sm">
-                          <span className="text-emerald-600 font-semibold">
-                            Active: {formatDuration(team.totalActiveTime || 0)}
-                          </span>
-                          <span className="text-amber-600 font-semibold">
-                            Breaks: {formatDuration(team.totalBreakTime || 0)}
-                          </span>
+                        <div className="flex items-center gap-4 text-sm">
+                          <div className="flex items-center gap-2 bg-emerald-50 px-3 py-2 rounded-lg border border-emerald-100">
+                            <Activity className="w-4 h-4 text-emerald-600" />
+                            <span className="text-emerald-600 font-bold">
+                              {formatDuration(team.totalActiveTime || 0)}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2 bg-amber-50 px-3 py-2 rounded-lg border border-amber-100">
+                            <Coffee className="w-4 h-4 text-amber-600" />
+                            <span className="text-amber-600 font-bold">
+                              {formatDuration(team.totalBreakTime || 0)}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     )}
