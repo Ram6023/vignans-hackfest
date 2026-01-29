@@ -8,6 +8,15 @@ export interface User {
   avatarUrl?: string;
 }
 
+// Time tracking session for breaks
+export interface TimeSession {
+  id: string;
+  type: 'active' | 'break';
+  startTime: string;
+  endTime?: string;
+  reason?: string; // For breaks: 'food', 'rest', 'emergency', etc.
+}
+
 export interface Team {
   id: string;
   name: string;
@@ -34,6 +43,13 @@ export interface Team {
   gitRepoLink?: string;
   youtubeLiveLink?: string;
   judgeRemarks?: string;
+  // Time tracking for onboarding (GDG Agentathon style)
+  onboardingStatus: 'not_started' | 'active' | 'on_break' | 'completed';
+  sessions?: TimeSession[];
+  totalActiveTime?: number; // in milliseconds
+  totalBreakTime?: number; // in milliseconds
+  currentSessionStart?: string; // Current active/break session start
+  breakReason?: string; // Current break reason
   roundScores?: {
     ideaElevation?: number;
     frontendLogics?: number;

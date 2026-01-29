@@ -55,7 +55,18 @@ const INITIAL_TEAMS: Team[] = [
     wifiPass: 'innovate2025',
     assignedVolunteerId: 'volunteer-1',
     isCheckedIn: true,
-    checkInTime: new Date(Date.now() - 1000 * 60 * 60 * 1.5).toISOString()
+    checkInTime: new Date(Date.now() - 1000 * 60 * 60 * 1.5).toISOString(),
+    onboardingStatus: 'active',
+    sessions: [
+      {
+        id: 'sess-1',
+        type: 'active',
+        startTime: new Date(Date.now() - 1000 * 60 * 60 * 1.5).toISOString(),
+      }
+    ],
+    currentSessionStart: new Date(Date.now() - 1000 * 60 * 60 * 1.5).toISOString(),
+    totalActiveTime: 0,
+    totalBreakTime: 0
   },
   {
     id: 'team-2',
@@ -68,7 +79,28 @@ const INITIAL_TEAMS: Team[] = [
     wifiSsid: 'Hackfest_Guest',
     wifiPass: 'innovate2025',
     assignedVolunteerId: 'volunteer-2',
-    isCheckedIn: false
+    isCheckedIn: false,
+    onboardingStatus: 'not_started',
+    sessions: [],
+    totalActiveTime: 0,
+    totalBreakTime: 0
+  },
+  {
+    id: 'team-3',
+    name: 'Code Ninjas',
+    email: 'ninjas@vignan.com',
+    members: ['Priya Sharma', 'Raj Kumar', 'Anita Desai'],
+    problemStatement: 'Health-Track AI',
+    roomNumber: 'Room 301',
+    tableNumber: '08',
+    wifiSsid: 'Hackfest_Guest',
+    wifiPass: 'innovate2025',
+    assignedVolunteerId: 'volunteer-1',
+    isCheckedIn: false,
+    onboardingStatus: 'not_started',
+    sessions: [],
+    totalActiveTime: 0,
+    totalBreakTime: 0
   }
 ];
 
@@ -486,5 +518,176 @@ export const dbService = {
       dbService.saveDb(db);
       wsService.scoreUpdated(team);
     }
+  },
+
+  // ========================================
+  // TIME TRACKING METHODS (GDG Agentathon Style)
+  // ========================================
+
+  // Start team onboarding - First check-in
+  async startOnboarding(teamId: string): Promise<Team> {
+    await delay(200);
+    const db = dbService.getDb();
+    const team = db.teams.find(t => t.id === teamId);
+
+    if (!team) throw new Error('Team not found');
+
+    const now = new Date().toISOString();
+    const sessionId = `sess-${Date.now()}`;
+
+    team.onboardingStatus = 'active';
+    team.isCheckedIn = true;
+    team.checkInTime = now;
+    team.currentSessionStart = now;
+    team.sessions = team.sessions || [];
+    team.sessions.push({
+      id: sessionId,
+      type: 'active',
+      startTime: now
+    });
+    team.totalActiveTime = team.totalActiveTime || 0;
+    team.totalBreakTime = team.totalBreakTime || 0;
+
+    dbService.saveDb(db);
+    wsService.teamCheckedIn(team);
+
+    return team;
+  },
+
+  // Start a break for the team
+  async startBreak(teamId: string, reason: string = 'break'): Promise<Team> {
+    await delay(200);
+    const db = dbService.getDb();
+    const team = db.teams.find(t => t.id === teamId);
+
+    if (!team) throw new Error('Team not found');
+    if (team.onboardingStatus !== 'active') throw new Error('Team is not currently active');
+
+    const now = new Date().toISOString();
+
+    // Close current active session
+    if (team.currentSessionStart && team.sessions) {
+      const lastSession = team.sessions[team.sessions.length - 1];
+      if (lastSession && lastSession.type === 'active' && !lastSession.endTime) {
+        lastSession.endTime = now;
+        const duration = new Date(now).getTime() - new Date(lastSession.startTime).getTime();
+        team.totalActiveTime = (team.totalActiveTime || 0) + duration;
+      }
+    }
+
+    // Start break session
+    const sessionId = `sess-${Date.now()}`;
+    team.onboardingStatus = 'on_break';
+    team.currentSessionStart = now;
+    team.breakReason = reason;
+    team.sessions = team.sessions || [];
+    team.sessions.push({
+      id: sessionId,
+      type: 'break',
+      startTime: now,
+      reason
+    });
+
+    dbService.saveDb(db);
+    wsService.teamUpdated(team);
+
+    return team;
+  },
+
+  // End break and resume active session
+  async endBreak(teamId: string): Promise<Team> {
+    await delay(200);
+    const db = dbService.getDb();
+    const team = db.teams.find(t => t.id === teamId);
+
+    if (!team) throw new Error('Team not found');
+    if (team.onboardingStatus !== 'on_break') throw new Error('Team is not currently on break');
+
+    const now = new Date().toISOString();
+
+    // Close current break session
+    if (team.currentSessionStart && team.sessions) {
+      const lastSession = team.sessions[team.sessions.length - 1];
+      if (lastSession && lastSession.type === 'break' && !lastSession.endTime) {
+        lastSession.endTime = now;
+        const duration = new Date(now).getTime() - new Date(lastSession.startTime).getTime();
+        team.totalBreakTime = (team.totalBreakTime || 0) + duration;
+      }
+    }
+
+    // Start new active session
+    const sessionId = `sess-${Date.now()}`;
+    team.onboardingStatus = 'active';
+    team.currentSessionStart = now;
+    team.breakReason = undefined;
+    team.sessions = team.sessions || [];
+    team.sessions.push({
+      id: sessionId,
+      type: 'active',
+      startTime: now
+    });
+
+    dbService.saveDb(db);
+    wsService.teamUpdated(team);
+
+    return team;
+  },
+
+  // Complete onboarding - Final check-out
+  async completeOnboarding(teamId: string): Promise<Team> {
+    await delay(200);
+    const db = dbService.getDb();
+    const team = db.teams.find(t => t.id === teamId);
+
+    if (!team) throw new Error('Team not found');
+
+    const now = new Date().toISOString();
+
+    // Close current session (active or break)
+    if (team.currentSessionStart && team.sessions) {
+      const lastSession = team.sessions[team.sessions.length - 1];
+      if (lastSession && !lastSession.endTime) {
+        lastSession.endTime = now;
+        const duration = new Date(now).getTime() - new Date(lastSession.startTime).getTime();
+        if (lastSession.type === 'active') {
+          team.totalActiveTime = (team.totalActiveTime || 0) + duration;
+        } else {
+          team.totalBreakTime = (team.totalBreakTime || 0) + duration;
+        }
+      }
+    }
+
+    team.onboardingStatus = 'completed';
+    team.currentSessionStart = undefined;
+    team.breakReason = undefined;
+
+    dbService.saveDb(db);
+    wsService.teamUpdated(team);
+
+    return team;
+  },
+
+  // Get real-time active duration (including current session)
+  getActiveTime(team: Team): number {
+    let total = team.totalActiveTime || 0;
+
+    if (team.onboardingStatus === 'active' && team.currentSessionStart) {
+      const currentDuration = Date.now() - new Date(team.currentSessionStart).getTime();
+      total += currentDuration;
+    }
+
+    return total;
+  },
+
+  // Get real-time break duration (including current session)
+  getBreakTime(team: Team): number {
+    let total = team.totalBreakTime || 0;
+
+    if (team.onboardingStatus === 'on_break' && team.currentSessionStart) {
+      const currentDuration = Date.now() - new Date(team.currentSessionStart).getTime();
+      total += currentDuration;
+    }
+
+    return total;
   }
 };
