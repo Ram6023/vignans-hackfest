@@ -1,7 +1,7 @@
 import { DbSchema, Team, User, Volunteer, Announcement, HackathonConfig, ScheduleEvent, ProblemStatement } from '../types';
 import { wsService } from './websocket';
 
-const DB_KEY = 'vignans_hackfest_prod_v1.2';
+const DB_KEY = 'vignans_hackfest_prod_v1.3'; // Updated to include onboardingStatus
 
 const INITIAL_CONFIG: HackathonConfig = {
   startTime: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),

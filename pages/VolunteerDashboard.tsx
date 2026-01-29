@@ -108,7 +108,15 @@ export const VolunteerDashboard: React.FC<VolunteerDashboardProps> = ({ voluntee
   const fetchData = useCallback(async () => {
     try {
       const myTeams = await dbService.getTeamsByVolunteer(volunteerId);
-      setTeams(myTeams);
+      // Normalize teams - ensure onboardingStatus exists (for old data)
+      const normalizedTeams = myTeams.map(team => ({
+        ...team,
+        onboardingStatus: team.onboardingStatus || (team.isCheckedIn ? 'active' : 'not_started'),
+        sessions: team.sessions || [],
+        totalActiveTime: team.totalActiveTime || 0,
+        totalBreakTime: team.totalBreakTime || 0,
+      })) as Team[];
+      setTeams(normalizedTeams);
       setAnnouncements(await dbService.getAnnouncements());
       setConfig(await dbService.getConfig());
     } catch (e) {
