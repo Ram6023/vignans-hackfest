@@ -77,7 +77,7 @@ export const Timer: React.FC<TimerProps> = ({ endTime }) => {
   // Digit card component
   const DigitCard = ({ value, label, isAccent = false }: { value: number; label: string; isAccent?: boolean }) => (
     <div className="flex flex-col items-center">
-      <div className={`relative ${isAccent ? config.accentBg : 'bg-white/5'} border ${isAccent ? '' : 'border-white/10'} rounded-2xl sm:rounded-3xl p-3 sm:p-5 backdrop-blur-sm min-w-[70px] sm:min-w-[100px] transition-all duration-300 hover:scale-105 ${config.ring} ring-1`}>
+      <div className={`digit-box relative ${isAccent ? config.accentBg : 'bg-white/5'} border ${isAccent ? '' : 'border-white/10'} rounded-2xl sm:rounded-3xl p-3 sm:p-5 backdrop-blur-sm min-w-[70px] sm:min-w-[100px] h-[60px] sm:h-[90px] lg:h-[100px] flex items-center justify-center transition-all duration-300 hover:scale-105 ${config.ring} ring-1`}>
         {!isAccent && (
           <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent opacity-0 hover:opacity-100 transition-opacity rounded-2xl sm:rounded-3xl"></div>
         )}
@@ -91,9 +91,9 @@ export const Timer: React.FC<TimerProps> = ({ endTime }) => {
     </div>
   );
 
-  // Separator component
+  // Separator component - centered with digit boxes
   const Separator = () => (
-    <div className="flex flex-col gap-2 mx-1 sm:mx-2 pb-6 sm:pb-8">
+    <div className="flex flex-col items-center justify-center gap-2 mx-1 sm:mx-2 h-[60px] sm:h-[90px] lg:h-[100px]">
       <span className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${config.glow.replace('/20', '/80')} animate-pulse shadow-lg`}></span>
       <span className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${config.glow.replace('/20', '/80')} animate-pulse shadow-lg`} style={{ animationDelay: '0.5s' }}></span>
     </div>
