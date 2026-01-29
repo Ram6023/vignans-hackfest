@@ -505,13 +505,13 @@ export const VolunteerDashboard: React.FC<VolunteerDashboardProps> = ({ voluntee
                   }`}
                 style={{ animationDelay: `${index * 50}ms` }}
               >
-                {/* Status Badge */}
-                <div className="absolute -top-3 right-4 z-10">
-                  <StatusBadge status={team.onboardingStatus} breakReason={team.breakReason} />
-                </div>
-
                 {/* Main Content */}
-                <div className="p-6">
+                <div className="p-6 pt-4">
+                  {/* Status Badge - Inside card, top right */}
+                  <div className="flex justify-end mb-3">
+                    <StatusBadge status={team.onboardingStatus} breakReason={team.breakReason} />
+                  </div>
+
                   <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
                     {/* Team Info */}
                     <div className="flex-1 min-w-0">
