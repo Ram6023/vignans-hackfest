@@ -74,13 +74,38 @@ export const Timer: React.FC<TimerProps> = ({ endTime }) => {
   const config = getStatusConfig();
   const StatusIcon = config.icon;
 
+  // Digit card component
+  const DigitCard = ({ value, label, isAccent = false }: { value: number; label: string; isAccent?: boolean }) => (
+    <div className="flex flex-col items-center">
+      <div className={`relative ${isAccent ? config.accentBg : 'bg-white/5'} border ${isAccent ? '' : 'border-white/10'} rounded-2xl sm:rounded-3xl p-3 sm:p-5 backdrop-blur-sm min-w-[70px] sm:min-w-[100px] transition-all duration-300 hover:scale-105 ${config.ring} ring-1`}>
+        {!isAccent && (
+          <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent opacity-0 hover:opacity-100 transition-opacity rounded-2xl sm:rounded-3xl"></div>
+        )}
+        <span className={`relative text-4xl sm:text-6xl lg:text-7xl font-black font-mono tracking-tighter ${isAccent ? config.accent : 'text-white'} tabular-nums block text-center`}>
+          {String(value).padStart(2, '0')}
+        </span>
+      </div>
+      <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.15em] text-white/40 mt-2 sm:mt-3">
+        {label}
+      </span>
+    </div>
+  );
+
+  // Separator component
+  const Separator = () => (
+    <div className="flex flex-col gap-2 mx-1 sm:mx-2 pb-6 sm:pb-8">
+      <span className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${config.glow.replace('/20', '/80')} animate-pulse shadow-lg`}></span>
+      <span className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${config.glow.replace('/20', '/80')} animate-pulse shadow-lg`} style={{ animationDelay: '0.5s' }}></span>
+    </div>
+  );
+
   return (
     <div className="relative group h-full">
       {/* Outer Glow */}
       <div className={`absolute -inset-1 bg-gradient-to-r ${config.gradient} rounded-[2.5rem] opacity-30 blur-lg group-hover:opacity-50 transition-all duration-500`}></div>
 
       {/* Main Container */}
-      <div className="relative h-full flex flex-col items-center justify-center p-6 sm:p-8 rounded-[2rem] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-white/5 shadow-2xl overflow-hidden">
+      <div className="relative h-full flex flex-col items-center justify-center p-6 sm:p-8 rounded-[2rem] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-white/5 shadow-2xl">
 
         {/* Background Effects */}
         <div className={`absolute top-0 left-0 w-full h-full ${config.glow} blur-[100px] opacity-50`}></div>
@@ -90,10 +115,10 @@ export const Timer: React.FC<TimerProps> = ({ endTime }) => {
         }}></div>
 
         {/* Status Badge */}
-        <div className="relative mb-6 sm:mb-8">
+        <div className="relative mb-4 sm:mb-6">
           <div className={`inline-flex items-center space-x-2 px-4 py-2 rounded-full ${config.accentBg} border backdrop-blur-xl`}>
             <StatusIcon className={`w-4 h-4 ${config.accent} ${status === 'running' ? 'animate-pulse' : status === 'ending' ? 'animate-bounce' : ''}`} />
-            <span className={`text-xs font-bold tracking-widest uppercase ${config.accent} -mr-[0.1em]`}>{config.label}</span>
+            <span className={`text-xs font-bold tracking-widest uppercase ${config.accent}`}>{config.label}</span>
             {status !== 'ended' && (
               <span className="relative flex h-2 w-2">
                 <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${config.accent.replace('text', 'bg').replace('-400', '-500')} opacity-75`}></span>
@@ -103,76 +128,18 @@ export const Timer: React.FC<TimerProps> = ({ endTime }) => {
           </div>
         </div>
 
-        {/* Timer Display Grid */}
-        <div className="relative grid grid-cols-[auto_auto_auto_auto_auto] items-center justify-center gap-x-2 sm:gap-x-4">
-
-          {/* Row 1: Digit Boxes and Separators */}
-
-          {/* Hours Box */}
-          <div className="group/digit">
-            <div className={`relative bg-white/5 border border-white/10 rounded-2xl sm:rounded-3xl p-3 sm:p-5 backdrop-blur-sm min-w-[70px] sm:min-w-[100px] transition-all duration-300 group-hover/digit:bg-white/10 group-hover/digit:border-white/20 ${config.ring} ring-1`}>
-              {/* Shine Effect */}
-              <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent opacity-0 group-hover/digit:opacity-100 transition-opacity rounded-2xl sm:rounded-3xl"></div>
-              <span className="relative text-4xl sm:text-6xl lg:text-7xl font-black font-mono tracking-tighter text-white tabular-nums">
-                {String(timeLeft.hours).padStart(2, '0')}
-              </span>
-            </div>
-          </div>
-
-          {/* Separator 1 */}
-          <div className="flex flex-col gap-2">
-            <span className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${config.glow.replace('/20', '/80')} animate-pulse shadow-lg`}></span>
-            <span className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${config.glow.replace('/20', '/80')} animate-pulse shadow-lg`} style={{ animationDelay: '0.5s' }}></span>
-          </div>
-
-          {/* Minutes Box */}
-          <div className="group/digit">
-            <div className={`relative bg-white/5 border border-white/10 rounded-2xl sm:rounded-3xl p-3 sm:p-5 backdrop-blur-sm min-w-[70px] sm:min-w-[100px] transition-all duration-300 group-hover/digit:bg-white/10 group-hover/digit:border-white/20 ${config.ring} ring-1`}>
-              <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent opacity-0 group-hover/digit:opacity-100 transition-opacity rounded-2xl sm:rounded-3xl"></div>
-              <span className="relative text-4xl sm:text-6xl lg:text-7xl font-black font-mono tracking-tighter text-white tabular-nums">
-                {String(timeLeft.minutes).padStart(2, '0')}
-              </span>
-            </div>
-          </div>
-
-          {/* Separator 2 */}
-          <div className="flex flex-col gap-2">
-            <span className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${config.glow.replace('/20', '/80')} animate-pulse shadow-lg`}></span>
-            <span className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${config.glow.replace('/20', '/80')} animate-pulse shadow-lg`} style={{ animationDelay: '0.5s' }}></span>
-          </div>
-
-          {/* Seconds Box */}
-          <div className="group/digit">
-            <div className={`relative border rounded-2xl sm:rounded-3xl p-3 sm:p-5 backdrop-blur-sm min-w-[70px] sm:min-w-[100px] transition-all duration-300 ${config.accentBg} group-hover/digit:scale-105`}>
-              <span className={`text-4xl sm:text-6xl lg:text-7xl font-black font-mono tracking-tighter ${config.accent} tabular-nums`}>
-                {String(timeLeft.seconds).padStart(2, '0')}
-              </span>
-            </div>
-          </div>
-
-          {/* Row 2: Labels */}
-          <div className="text-center">
-            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] -mr-[0.2em] text-white/30 mt-2 sm:mt-3 block">Hours</span>
-          </div>
-
-          {/* Empty space under separator */}
-          <div />
-
-          <div className="text-center">
-            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] -mr-[0.2em] text-white/30 mt-2 sm:mt-3 block">Minutes</span>
-          </div>
-
-          {/* Empty space under separator */}
-          <div />
-
-          <div className="text-center">
-            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] -mr-[0.2em] text-white/30 mt-2 sm:mt-3 block">Seconds</span>
-          </div>
+        {/* Timer Display - Using Flexbox for proper alignment */}
+        <div className="relative flex items-start justify-center">
+          <DigitCard value={timeLeft.hours} label="Hours" />
+          <Separator />
+          <DigitCard value={timeLeft.minutes} label="Minutes" />
+          <Separator />
+          <DigitCard value={timeLeft.seconds} label="Seconds" isAccent />
         </div>
 
         {/* Status Message for Ended */}
         {status === 'ended' && (
-          <div className="mt-6 sm:mt-8 flex items-center bg-rose-900/30 px-5 py-2.5 rounded-full border border-rose-500/30 animate-pulse">
+          <div className="mt-4 sm:mt-6 flex items-center bg-rose-900/30 px-5 py-2.5 rounded-full border border-rose-500/30 animate-pulse">
             <AlertCircle className="w-5 h-5 mr-2 text-rose-400" />
             <span className="font-bold tracking-wide text-rose-300">Hacking Period Ended</span>
           </div>
