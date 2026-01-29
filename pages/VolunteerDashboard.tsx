@@ -40,22 +40,27 @@ const formatDuration = (ms: number): string => {
   return `${seconds}s`;
 };
 
-// Live timer component
-const LiveTimer: React.FC<{ startTime: string; type: 'active' | 'break' }> = ({ startTime, type }) => {
+// Live timer component - now includes accumulated time from previous sessions
+const LiveTimer: React.FC<{
+  startTime: string;
+  type: 'active' | 'break';
+  previousTotal?: number; // Accumulated time from previous sessions
+}> = ({ startTime, type, previousTotal = 0 }) => {
   const [elapsed, setElapsed] = useState(0);
 
   useEffect(() => {
     const start = new Date(startTime).getTime();
     const updateTimer = () => {
-      setElapsed(Date.now() - start);
+      const currentSession = Date.now() - start;
+      setElapsed(previousTotal + currentSession);
     };
     updateTimer();
     const interval = setInterval(updateTimer, 1000);
     return () => clearInterval(interval);
-  }, [startTime]);
+  }, [startTime, previousTotal]);
 
   return (
-    <span className={`font-mono font-bold ${type === 'active' ? 'text-emerald-600' : 'text-amber-600'}`}>
+    <span className={`font-mono font-bold text-lg ${type === 'active' ? 'text-emerald-600' : 'text-amber-600'}`}>
       {formatDuration(elapsed)}
     </span>
   );
@@ -542,7 +547,11 @@ export const VolunteerDashboard: React.FC<VolunteerDashboardProps> = ({ voluntee
                           <div>
                             <p className="text-xs text-emerald-600 font-medium">Active Time</p>
                             {team.onboardingStatus === 'active' && team.currentSessionStart ? (
-                              <LiveTimer startTime={team.checkInTime!} type="active" />
+                              <LiveTimer
+                                startTime={team.currentSessionStart}
+                                type="active"
+                                previousTotal={team.totalActiveTime || 0}
+                              />
                             ) : (
                               <span className="font-mono font-bold text-emerald-600 text-lg">
                                 {formatDuration(dbService.getActiveTime(team))}
@@ -557,7 +566,11 @@ export const VolunteerDashboard: React.FC<VolunteerDashboardProps> = ({ voluntee
                             <div>
                               <p className="text-xs text-amber-600 font-medium">Break Time</p>
                               {team.onboardingStatus === 'on_break' && team.currentSessionStart ? (
-                                <LiveTimer startTime={team.currentSessionStart} type="break" />
+                                <LiveTimer
+                                  startTime={team.currentSessionStart}
+                                  type="break"
+                                  previousTotal={team.totalBreakTime || 0}
+                                />
                               ) : (
                                 <span className="font-mono font-bold text-amber-600 text-lg">
                                   {formatDuration(dbService.getBreakTime(team))}
