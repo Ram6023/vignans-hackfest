@@ -281,6 +281,9 @@ export const JudgeDashboard: React.FC<JudgeDashboardProps> = ({ judgeId }) => {
                     const isDirty = (edit?.score !== undefined && edit.score !== (savedScore?.toString() || '')) ||
                         (edit?.remarks !== undefined && edit.remarks !== (savedRemarks || ''));
 
+                    const otherRoundsScore = (team.score || 0) - (savedScore || 0);
+                    const liveTotalScore = otherRoundsScore + (parseInt(currentScore) || 0);
+
                     return (
                         <div key={team.id} className="glass-card rounded-3xl overflow-hidden border border-white/60 hover:shadow-xl transition-all duration-300">
                             <div className="p-6 sm:p-8">
@@ -317,7 +320,11 @@ export const JudgeDashboard: React.FC<JudgeDashboardProps> = ({ judgeId }) => {
                                             )}
                                             <span className="inline-flex items-center px-3 py-1.5 rounded-xl bg-amber-50 text-amber-700 text-xs font-bold ring-1 ring-amber-100">
                                                 <Trophy className="w-3.5 h-3.5 mr-1.5" />
-                                                Total Score: {team.score || 0}
+                                                Total Score: {liveTotalScore}
+                                            </span>
+                                            <span className="inline-flex items-center px-3 py-1.5 rounded-xl bg-indigo-50 text-indigo-700 text-xs font-bold ring-1 ring-indigo-100 transition-all">
+                                                <Star className="w-3.5 h-3.5 mr-1.5" />
+                                                {rounds.find(r => r.id === selectedRound)?.label.split(':')[0]}: {currentScore || 0} / 100
                                             </span>
                                         </div>
 
@@ -332,9 +339,14 @@ export const JudgeDashboard: React.FC<JudgeDashboardProps> = ({ judgeId }) => {
                                                 <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center">
                                                     <ClipboardList className="w-3.5 h-3.5 mr-2 text-indigo-500" /> Evaluation Checklist
                                                 </h5>
-                                                <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">
-                                                    {ROUND_CRITERIA[selectedRound].items.length} points
-                                                </span>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
+                                                        {ROUND_CRITERIA[selectedRound].items.length} points
+                                                    </span>
+                                                    <span className="text-[10px] font-black text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-100 animate-pulse">
+                                                        Sum: {currentScore || 0} / 100
+                                                    </span>
+                                                </div>
                                             </div>
                                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                                 {ROUND_CRITERIA[selectedRound].items.map((criterion, idx) => {
