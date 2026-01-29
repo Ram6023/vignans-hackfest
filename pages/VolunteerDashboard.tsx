@@ -8,7 +8,7 @@ import {
   Search, MapPin, CheckSquare, Square, Loader2, Users, CheckCircle,
   Clock, Sparkles, X, Play, Pause, Coffee, Utensils, Moon,
   AlertTriangle, StopCircle, Timer as TimerIcon, Activity,
-  TrendingUp, Zap, RefreshCw
+  TrendingUp, Zap, RefreshCw, LogOut
 } from 'lucide-react';
 
 interface VolunteerDashboardProps {
@@ -324,8 +324,8 @@ export const VolunteerDashboard: React.FC<VolunteerDashboardProps> = ({ voluntee
                       key={reason.id}
                       onClick={() => setSelectedBreakReason(reason.id)}
                       className={`p-4 rounded-2xl border-2 transition-all ${selectedBreakReason === reason.id
-                          ? `border-${reason.color}-500 bg-${reason.color}-50 shadow-lg`
-                          : 'border-slate-200 hover:border-slate-300 bg-white'
+                        ? `border-${reason.color}-500 bg-${reason.color}-50 shadow-lg`
+                        : 'border-slate-200 hover:border-slate-300 bg-white'
                         }`}
                     >
                       <reason.icon className={`w-6 h-6 mx-auto mb-2 ${selectedBreakReason === reason.id ? `text-${reason.color}-600` : 'text-slate-400'
@@ -453,8 +453,8 @@ export const VolunteerDashboard: React.FC<VolunteerDashboardProps> = ({ voluntee
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as any)}
                     className={`flex items-center gap-2 px-4 py-2 rounded-xl font-semibold text-sm transition-all whitespace-nowrap ${activeTab === tab.id
-                        ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-200'
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-200'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                       }`}
                   >
                     {tab.label}
@@ -487,53 +487,56 @@ export const VolunteerDashboard: React.FC<VolunteerDashboardProps> = ({ voluntee
             {filteredTeams.map((team, index) => (
               <div
                 key={team.id}
-                className={`group relative bg-white rounded-2xl p-6 transition-all duration-300 border-2 ${team.onboardingStatus === 'active'
-                    ? 'border-emerald-200 bg-gradient-to-br from-white to-emerald-50/30'
-                    : team.onboardingStatus === 'on_break'
-                      ? 'border-amber-200 bg-gradient-to-br from-white to-amber-50/30'
-                      : team.onboardingStatus === 'completed'
-                        ? 'border-violet-200 bg-gradient-to-br from-white to-violet-50/30'
-                        : 'border-slate-200 hover:border-violet-300 hover:shadow-lg hover:shadow-violet-100'
+                className={`group relative bg-white rounded-2xl overflow-hidden transition-all duration-300 border-2 ${team.onboardingStatus === 'active'
+                  ? 'border-emerald-200 bg-gradient-to-br from-white to-emerald-50/30'
+                  : team.onboardingStatus === 'on_break'
+                    ? 'border-amber-200 bg-gradient-to-br from-white to-amber-50/30'
+                    : team.onboardingStatus === 'completed'
+                      ? 'border-violet-200 bg-gradient-to-br from-white to-violet-50/30'
+                      : 'border-slate-200 hover:border-violet-300 hover:shadow-lg hover:shadow-violet-100'
                   }`}
                 style={{ animationDelay: `${index * 50}ms` }}
               >
                 {/* Status Badge */}
-                <div className="absolute -top-3 right-4">
+                <div className="absolute -top-3 right-4 z-10">
                   <StatusBadge status={team.onboardingStatus} breakReason={team.breakReason} />
                 </div>
 
-                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                  {/* Team Info */}
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-xl font-bold text-slate-900 mb-2">{team.name}</h3>
+                {/* Main Content */}
+                <div className="p-6">
+                  <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
+                    {/* Team Info */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-xl font-bold text-slate-900 mb-2">{team.name}</h3>
 
-                    {/* Members */}
-                    <div className="flex items-center text-sm text-slate-500 mb-3">
-                      <Users className="w-4 h-4 mr-1.5" />
-                      <span className="font-medium">{team.members.join(', ')}</span>
-                    </div>
+                      {/* Members */}
+                      <div className="flex items-center text-sm text-slate-500 mb-3">
+                        <Users className="w-4 h-4 mr-1.5" />
+                        <span className="font-medium">{team.members.join(', ')}</span>
+                      </div>
 
-                    {/* Location */}
-                    <div className="flex flex-wrap items-center gap-2 mb-3">
-                      <span className="inline-flex items-center px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold">
-                        <MapPin className="w-3 h-3 mr-1.5 text-violet-500" />
-                        {team.roomNumber}
-                        <span className="mx-1.5 text-slate-300">|</span>
-                        Table {team.tableNumber}
-                      </span>
+                      {/* Location */}
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="inline-flex items-center px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold">
+                          <MapPin className="w-3 h-3 mr-1.5 text-violet-500" />
+                          {team.roomNumber}
+                          <span className="mx-1.5 text-slate-300">|</span>
+                          Table {team.tableNumber}
+                        </span>
+                      </div>
                     </div>
 
                     {/* Time Stats (for active/break/completed teams) */}
                     {team.onboardingStatus !== 'not_started' && (
-                      <div className="flex flex-wrap gap-3 mt-3">
-                        <div className="flex items-center gap-2 bg-emerald-50 px-3 py-2 rounded-xl border border-emerald-100">
-                          <Activity className="w-4 h-4 text-emerald-600" />
+                      <div className="flex flex-wrap lg:flex-col gap-3">
+                        <div className="flex items-center gap-2 bg-emerald-50 px-4 py-3 rounded-xl border border-emerald-100">
+                          <Activity className="w-5 h-5 text-emerald-600" />
                           <div>
                             <p className="text-xs text-emerald-600 font-medium">Active Time</p>
                             {team.onboardingStatus === 'active' && team.currentSessionStart ? (
                               <LiveTimer startTime={team.checkInTime!} type="active" />
                             ) : (
-                              <span className="font-mono font-bold text-emerald-600">
+                              <span className="font-mono font-bold text-emerald-600 text-lg">
                                 {formatDuration(dbService.getActiveTime(team))}
                               </span>
                             )}
@@ -541,14 +544,14 @@ export const VolunteerDashboard: React.FC<VolunteerDashboardProps> = ({ voluntee
                         </div>
 
                         {(team.totalBreakTime || 0) > 0 || team.onboardingStatus === 'on_break' ? (
-                          <div className="flex items-center gap-2 bg-amber-50 px-3 py-2 rounded-xl border border-amber-100">
-                            <Coffee className="w-4 h-4 text-amber-600" />
+                          <div className="flex items-center gap-2 bg-amber-50 px-4 py-3 rounded-xl border border-amber-100">
+                            <Coffee className="w-5 h-5 text-amber-600" />
                             <div>
                               <p className="text-xs text-amber-600 font-medium">Break Time</p>
                               {team.onboardingStatus === 'on_break' && team.currentSessionStart ? (
                                 <LiveTimer startTime={team.currentSessionStart} type="break" />
                               ) : (
-                                <span className="font-mono font-bold text-amber-600">
+                                <span className="font-mono font-bold text-amber-600 text-lg">
                                   {formatDuration(dbService.getBreakTime(team))}
                                 </span>
                               )}
@@ -558,60 +561,98 @@ export const VolunteerDashboard: React.FC<VolunteerDashboardProps> = ({ voluntee
                       </div>
                     )}
                   </div>
+                </div>
 
-                  {/* Action Buttons */}
-                  <div className="flex flex-col gap-2">
+                {/* Action Bar - GDG Style */}
+                <div className={`px-6 py-4 border-t ${team.onboardingStatus === 'active'
+                  ? 'bg-emerald-50/50 border-emerald-100'
+                  : team.onboardingStatus === 'on_break'
+                    ? 'bg-amber-50/50 border-amber-100'
+                    : team.onboardingStatus === 'completed'
+                      ? 'bg-violet-50/50 border-violet-100'
+                      : 'bg-slate-50/50 border-slate-100'
+                  }`}>
+                  <div className="flex flex-wrap items-center gap-3">
+                    {/* Not Started - Check In */}
                     {team.onboardingStatus === 'not_started' && (
                       <button
                         onClick={() => setActionModal({ team, action: 'checkin' })}
-                        className="btn-slide-in-emerald"
+                        className="flex-1 sm:flex-none btn-slide-in-emerald"
                       >
-                        <Play className="w-4 h-4" />
-                        <span>Check In</span>
+                        <Play className="w-5 h-5" />
+                        <span>Check In & Start Timer</span>
                       </button>
                     )}
 
+                    {/* Active - Break, Checkout options */}
                     {team.onboardingStatus === 'active' && (
                       <>
                         <button
                           onClick={() => setActionModal({ team, action: 'break' })}
-                          className="btn-slide-in-amber"
+                          className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-3 font-bold rounded-xl bg-amber-100 text-amber-700 border-2 border-amber-200 hover:bg-amber-200 hover:border-amber-300 transition-all"
                         >
-                          <Pause className="w-4 h-4" />
-                          <span>Start Break</span>
+                          <Coffee className="w-5 h-5" />
+                          <span>Take Break</span>
                         </button>
                         <button
                           onClick={() => setActionModal({ team, action: 'complete' })}
-                          className="btn-slide-in-ghost text-sm"
+                          className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-3 font-bold rounded-xl bg-rose-100 text-rose-700 border-2 border-rose-200 hover:bg-rose-200 hover:border-rose-300 transition-all"
                         >
-                          <StopCircle className="w-4 h-4" />
-                          <span>Complete</span>
+                          <LogOut className="w-5 h-5" />
+                          <span>Check Out</span>
                         </button>
+                        <div className="hidden sm:flex items-center gap-2 ml-auto text-sm text-emerald-600 bg-emerald-100 px-3 py-2 rounded-lg">
+                          <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                          <span className="font-semibold">Timer Running</span>
+                        </div>
                       </>
                     )}
 
+                    {/* On Break - Resume */}
                     {team.onboardingStatus === 'on_break' && (
-                      <button
-                        onClick={() => handleEndBreak(team)}
-                        disabled={isProcessing}
-                        className="btn-slide-in-emerald"
-                      >
-                        {isProcessing ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <>
-                            <RefreshCw className="w-4 h-4" />
-                            <span>Resume</span>
-                          </>
-                        )}
-                      </button>
+                      <>
+                        <button
+                          onClick={() => handleEndBreak(team)}
+                          disabled={isProcessing}
+                          className="flex-1 sm:flex-none btn-slide-in-emerald"
+                        >
+                          {isProcessing ? (
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                          ) : (
+                            <>
+                              <Play className="w-5 h-5" />
+                              <span>Resume Hacking</span>
+                            </>
+                          )}
+                        </button>
+                        <button
+                          onClick={() => setActionModal({ team, action: 'complete' })}
+                          className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-3 font-bold rounded-xl bg-rose-100 text-rose-700 border-2 border-rose-200 hover:bg-rose-200 hover:border-rose-300 transition-all"
+                        >
+                          <LogOut className="w-5 h-5" />
+                          <span>Check Out</span>
+                        </button>
+                        <div className="hidden sm:flex items-center gap-2 ml-auto text-sm text-amber-600 bg-amber-100 px-3 py-2 rounded-lg">
+                          <Pause className="w-4 h-4" />
+                          <span className="font-semibold">On {team.breakReason || 'Break'}</span>
+                        </div>
+                      </>
                     )}
 
+                    {/* Completed */}
                     {team.onboardingStatus === 'completed' && (
-                      <div className="text-center px-4 py-2">
-                        <div className="flex items-center gap-2 text-violet-600">
+                      <div className="flex flex-wrap items-center gap-4 w-full">
+                        <div className="flex items-center gap-2 text-violet-600 bg-violet-100 px-4 py-2 rounded-lg">
                           <CheckCircle className="w-5 h-5" />
-                          <span className="font-semibold">Done</span>
+                          <span className="font-bold">Session Completed</span>
+                        </div>
+                        <div className="flex gap-4 ml-auto text-sm">
+                          <span className="text-emerald-600 font-semibold">
+                            Active: {formatDuration(team.totalActiveTime || 0)}
+                          </span>
+                          <span className="text-amber-600 font-semibold">
+                            Breaks: {formatDuration(team.totalBreakTime || 0)}
+                          </span>
                         </div>
                       </div>
                     )}
