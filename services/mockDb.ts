@@ -4,14 +4,14 @@ import { wsService } from './websocket';
 const DB_KEY = 'vignans_hackfest_prod_v1.3'; // Updated to include onboardingStatus
 
 const INITIAL_CONFIG: HackathonConfig = {
-  startTime: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
-  endTime: new Date(Date.now() + 1000 * 60 * 60 * 22).toISOString(),
-  eventName: "Vignan's Hackfest 2025",
+  startTime: new Date('2026-02-26T09:00:00').toISOString(),
+  endTime: new Date('2026-02-27T09:00:00').toISOString(),
+  eventName: "Vignan's Hackfest 2026",
   venue: 'Vignan University Campus, Main Auditorium',
   maxTeamSize: 4,
   minTeamSize: 2,
   registrationOpen: true,
-  submissionDeadline: new Date(Date.now() + 1000 * 60 * 60 * 20).toISOString(),
+  submissionDeadline: new Date('2026-02-27T08:00:00').toISOString(),
 };
 
 const INITIAL_USERS: User[] = [
@@ -52,7 +52,7 @@ const INITIAL_TEAMS: Team[] = [
     roomNumber: 'Main Hall',
     tableNumber: '42',
     wifiSsid: 'Hackfest_Guest',
-    wifiPass: 'innovate2025',
+    wifiPass: 'innovate2026',
     assignedVolunteerId: 'volunteer-1',
     isCheckedIn: true,
     checkInTime: new Date(Date.now() - 1000 * 60 * 60 * 1.5).toISOString(),
@@ -77,7 +77,7 @@ const INITIAL_TEAMS: Team[] = [
     roomNumber: 'Room 204',
     tableNumber: '15',
     wifiSsid: 'Hackfest_Guest',
-    wifiPass: 'innovate2025',
+    wifiPass: 'innovate2026',
     assignedVolunteerId: 'volunteer-2',
     isCheckedIn: false,
     onboardingStatus: 'not_started',
@@ -94,7 +94,7 @@ const INITIAL_TEAMS: Team[] = [
     roomNumber: 'Room 301',
     tableNumber: '08',
     wifiSsid: 'Hackfest_Guest',
-    wifiPass: 'innovate2025',
+    wifiPass: 'innovate2026',
     assignedVolunteerId: 'volunteer-1',
     isCheckedIn: false,
     onboardingStatus: 'not_started',
@@ -109,18 +109,18 @@ const INITIAL_SCHEDULE: ScheduleEvent[] = [
     id: '1',
     title: 'Opening Ceremony',
     description: 'Welcome and Keynote Speech by Chief Guest',
-    startTime: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
-    endTime: new Date(Date.now() - 1000 * 60 * 60 * 1).toISOString(),
+    startTime: new Date('2026-02-26T09:00:00').toISOString(),
+    endTime: new Date('2026-02-26T10:00:00').toISOString(),
     type: 'ceremony',
     location: 'Main Auditorium',
-    isCompleted: true
+    isCompleted: false
   },
   {
     id: '2',
     title: 'Hacking Starts!',
     description: 'Begin working on your innovative solutions',
-    startTime: new Date(Date.now() - 1000 * 60 * 60 * 1).toISOString(),
-    endTime: new Date(Date.now() + 1000 * 60 * 60 * 23).toISOString(),
+    startTime: new Date('2026-02-26T10:00:00').toISOString(),
+    endTime: new Date('2026-02-27T09:00:00').toISOString(),
     type: 'deadline',
     location: 'Hacking Bays'
   },
@@ -128,8 +128,8 @@ const INITIAL_SCHEDULE: ScheduleEvent[] = [
     id: '3',
     title: 'Lunch Break',
     description: 'Refresh and recharge',
-    startTime: new Date(Date.now() + 1000 * 60 * 60 * 1).toISOString(),
-    endTime: new Date(Date.now() + 1000 * 60 * 60 * 2).toISOString(),
+    startTime: new Date('2026-02-26T13:00:00').toISOString(),
+    endTime: new Date('2026-02-26T14:00:00').toISOString(),
     type: 'meal',
     location: 'Food Court'
   },
@@ -137,8 +137,8 @@ const INITIAL_SCHEDULE: ScheduleEvent[] = [
     id: '4',
     title: 'Technical Workshop',
     description: 'Introduction to Cloud Infrastructure',
-    startTime: new Date(Date.now() + 1000 * 60 * 60 * 4).toISOString(),
-    endTime: new Date(Date.now() + 1000 * 60 * 60 * 5).toISOString(),
+    startTime: new Date('2026-02-26T16:00:00').toISOString(),
+    endTime: new Date('2026-02-26T17:00:00').toISOString(),
     type: 'workshop',
     location: 'Seminar Hall'
   }
@@ -174,7 +174,7 @@ const INITIAL_PROBLEM_STATEMENTS: ProblemStatement[] = [
 const INITIAL_ANNOUNCEMENTS: Announcement[] = [
   {
     id: 'ann1',
-    message: 'Welcome to Vignan\'s Hackfest 2025! Let the innovation begin.',
+    message: 'Welcome to Vignan\'s Hackfest 2026! Let the innovation begin.',
     createdAt: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
     author: 'Admin',
     priority: 'normal',

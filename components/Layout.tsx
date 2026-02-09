@@ -83,12 +83,13 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout, title 
           <div className="px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
             {/* Logo & Title */}
             <div className="flex items-center space-x-3">
-              <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-br from-violet-600 to-indigo-600 rounded-xl blur-lg opacity-40 group-hover:opacity-60 transition-opacity"></div>
-                <div className="relative bg-gradient-to-br from-violet-600 to-indigo-600 p-2.5 rounded-xl shadow-lg text-white transform group-hover:scale-105 transition-transform">
-                  <Rocket className="w-5 h-5" />
-                </div>
-              </div>
+              <a href="/" className="relative group">
+                <img
+                  src="/vignan-logo.png"
+                  alt="Vignan Logo"
+                  className="h-10 w-auto drop-shadow-md group-hover:scale-105 transition-transform"
+                />
+              </a>
               <div className="hidden sm:block">
                 <h1 className="text-lg sm:text-xl font-bold tracking-tight bg-gradient-to-r from-slate-900 via-slate-700 to-slate-900 bg-clip-text text-transparent">
                   {title}

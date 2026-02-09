@@ -1,4 +1,4 @@
-// Vignan's Hackfest 2025 - Service Worker
+// Vignan's Hackfest 2026 - Service Worker
 const CACHE_NAME = 'hackfest-v1.0.0';
 const STATIC_CACHE = 'hackfest-static-v1';
 const DYNAMIC_CACHE = 'hackfest-dynamic-v1';
@@ -137,7 +137,7 @@ self.addEventListener('push', (event) => {
     };
 
     event.waitUntil(
-        self.registration.showNotification("Vignan's Hackfest 2025", options)
+        self.registration.showNotification("Vignan's Hackfest 2026", options)
     );
 });
 

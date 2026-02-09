@@ -103,9 +103,9 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onRegister, onBack }
                 assignedVolunteerId: randomVolunteer?.id || '',
                 isCheckedIn: false,
                 score: 0,
-                techStack,
                 skills: [],
                 lookingForMembers: validMembers.length < 4,
+                onboardingStatus: 'not_started',
             };
 
             await dbService.createTeam(newTeam);
@@ -159,6 +159,13 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onRegister, onBack }
                 </div>
 
                 <div className="relative z-10 flex flex-col justify-center items-start p-16 xl:p-20">
+                    <div className="mb-6">
+                        <img
+                            src="/vignan-logo.png"
+                            alt="Vignan Logo"
+                            className="h-20 xl:h-24 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]"
+                        />
+                    </div>
                     <div className="mb-10 inline-flex items-center space-x-4 bg-gradient-to-r from-white/10 via-white/5 to-white/10 backdrop-blur-2xl px-8 py-4 rounded-2xl border border-white/20">
                         <div className="relative">
                             <div className="absolute inset-0 bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 rounded-xl blur-md animate-pulse scale-125"></div>
@@ -193,8 +200,8 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onRegister, onBack }
                         {[1, 2, 3].map((s) => (
                             <div key={s} className="flex-1">
                                 <div className={`h-2 rounded-full transition-all duration-500 ${step >= s
-                                        ? 'bg-gradient-to-r from-emerald-500 to-teal-500'
-                                        : 'bg-white/10'
+                                    ? 'bg-gradient-to-r from-emerald-500 to-teal-500'
+                                    : 'bg-white/10'
                                     }`}></div>
                                 <p className={`text-xs mt-2 font-medium ${step >= s ? 'text-emerald-400' : 'text-slate-600'}`}>
                                     {s === 1 ? 'Team Info' : s === 2 ? 'Problem' : 'Details'}
@@ -327,8 +334,8 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onRegister, onBack }
                                         key={ps.id}
                                         onClick={() => setSelectedProblem(ps.id)}
                                         className={`p-5 rounded-2xl border-2 cursor-pointer transition-all ${selectedProblem === ps.id
-                                                ? 'border-emerald-500 bg-emerald-50 shadow-lg shadow-emerald-100'
-                                                : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-md'
+                                            ? 'border-emerald-500 bg-emerald-50 shadow-lg shadow-emerald-100'
+                                            : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-md'
                                             }`}
                                     >
                                         <div className="flex items-start justify-between mb-2">

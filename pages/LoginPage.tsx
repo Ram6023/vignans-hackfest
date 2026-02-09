@@ -88,6 +88,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onShowRegister })
         {/* Content */}
         <div className="relative z-10 flex flex-col justify-center items-start p-16 xl:p-20">
           {/* Premium Hackathon Badge */}
+          <div className="mb-6">
+            <img
+              src="/vignan-logo.png"
+              alt="Vignan Logo"
+              className="h-20 xl:h-24 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]"
+            />
+          </div>
           <div className="mb-10 inline-flex items-center space-x-4 bg-gradient-to-r from-white/10 via-white/5 to-white/10 backdrop-blur-2xl px-8 py-4 rounded-2xl border border-white/20 shadow-2xl shadow-violet-500/20 hover:shadow-violet-500/30 hover:border-white/30 transition-all duration-500 group">
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-500 rounded-xl blur-md animate-pulse scale-125"></div>
@@ -97,10 +104,10 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onShowRegister })
             </div>
             <div className="flex flex-col">
               <span className="text-2xl xl:text-3xl font-black tracking-tight bg-gradient-to-r from-white via-violet-200 to-purple-200 bg-clip-text text-transparent drop-shadow-lg" style={{ fontFamily: "'Inter', 'Outfit', system-ui, sans-serif" }}>
-                Vignan's Hackfest
+                Hackfest
               </span>
               <span className="text-sm font-bold tracking-widest uppercase bg-gradient-to-r from-violet-400 via-purple-300 to-blue-400 bg-clip-text text-transparent">
-                2025 Edition
+                2026 Edition
               </span>
             </div>
             <div className="flex flex-col items-center space-y-1 ml-2">
@@ -147,7 +154,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onShowRegister })
           <div className="absolute bottom-12 left-16 right-16 flex items-center space-x-4 text-slate-600">
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent"></div>
             <Calendar className="w-4 h-4" />
-            <span className="text-xs font-semibold uppercase tracking-widest">January 2025</span>
+            <span className="text-xs font-semibold uppercase tracking-widest">February 2026</span>
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent"></div>
           </div>
         </div>
@@ -164,8 +171,12 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onShowRegister })
         <div className="relative w-full max-w-md space-y-8">
           {/* Mobile Logo */}
           <div className="text-center lg:hidden mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-violet-600 to-indigo-600 rounded-2xl shadow-xl shadow-violet-500/30 mb-4">
-              <Rocket className="w-8 h-8 text-white" />
+            <div className="inline-flex items-center justify-center mb-4">
+              <img
+                src="/vignan-logo.png"
+                alt="Vignan Logo"
+                className="h-16 drop-shadow-lg"
+              />
             </div>
             <h2 className="text-xl font-bold text-slate-900">Vignan's Hackfest</h2>
           </div>
@@ -296,7 +307,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onShowRegister })
 
           {/* Footer */}
           <p className="text-center text-sm text-slate-400 font-medium">
-            © 2025 Vignan's Hackfest. Built for innovators.
+            © 2026 Vignan's Hackfest. Built for innovators.
           </p>
         </div>
       </div>

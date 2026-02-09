@@ -16,9 +16,9 @@ export default defineConfig(({ mode }) => {
         registerType: 'autoUpdate',
         includeAssets: ['icons/*.png', 'hackathon-hero.png'],
         manifest: {
-          name: "Vignan's Hackfest 2025",
+          name: "Vignan's Hackfest 2026",
           short_name: 'Hackfest',
-          description: "Vignan's Hackfest 2025 - Official Management Portal for teams, volunteers, judges, and administrators.",
+          description: "Vignan's Hackfest 2026 - Official Management Portal for teams, volunteers, judges, and administrators.",
           theme_color: '#7c3aed',
           background_color: '#0f172a',
           display: 'standalone',

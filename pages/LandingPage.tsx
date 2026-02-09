@@ -60,7 +60,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
 
     // Countdown to hackathon start (Updated to 2026)
     useEffect(() => {
-        const hackathonDate = new Date('2026-03-15T09:00:00'); // Example date in 2026
+        const hackathonDate = new Date('2026-02-26T09:00:00'); // Set to Feb 26, 2026
 
         const timer = setInterval(() => {
             const now = new Date();
@@ -129,23 +129,35 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                     <div className="flex flex-col lg:flex-row items-center justify-between gap-12 mb-16">
 
                         {/* Left Side - Title */}
-                        <div className="text-left flex-1 animate-fade-in-up">
-                            <h1 className="hackathon-title text-6xl md:text-8xl lg:text-[10rem] mb-0 leading-[0.85]">
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-100 to-indigo-100">
-                                    VIGNAN'S
-                                </span>
-                            </h1>
-                            <h1 className="hackathon-title text-6xl md:text-8xl lg:text-[10rem] mb-0 leading-[0.85]">
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-100 to-indigo-100">
-                                    HACKFEST
-                                </span>
-                            </h1>
-                            <p className="hackathon-title text-5xl md:text-7xl lg:text-8xl mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-violet-400 to-indigo-400">
-                                2026
-                            </p>
-                            <p className="text-xl md:text-2xl text-white/40 font-medium tracking-wide">
-                                Build <span className="text-white/70">·</span> Innovate <span className="text-white/70">·</span> Transform
-                            </p>
+                        <div className="text-left flex-1 animate-fade-in-up flex flex-col items-center lg:items-start text-center lg:text-left">
+                            <div className="flex items-center gap-6 sm:gap-10 mb-8 w-full justify-center lg:justify-start">
+                                <img
+                                    src="/vignan-logo.png"
+                                    alt="Vignan Logo"
+                                    className="h-24 md:h-36 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] transition-transform hover:scale-105 duration-500"
+                                />
+
+                                {/* Vertical Divider Line & Tagline */}
+                                <div className="flex flex-col items-center gap-4">
+                                    <div className="h-20 md:h-28 w-px bg-white/20"></div>
+                                    <div className="absolute -bottom-12 left-[55%] -translate-x-1/2 whitespace-nowrap">
+                                        <p className="text-xl md:text-2xl text-white/40 font-medium tracking-wide">
+                                            Build <span className="text-white/70">·</span> Innovate <span className="text-white/70">·</span> Transform
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-col text-left">
+                                    <h1 className="hackathon-title text-5xl md:text-7xl lg:text-8xl mb-0 leading-[1.1]">
+                                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-100 to-indigo-100">
+                                            HACKFEST
+                                        </span>
+                                    </h1>
+                                    <p className="hackathon-title text-4xl md:text-6xl lg:text-7xl text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-violet-400 to-indigo-400 -mt-2">
+                                        2026
+                                    </p>
+                                </div>
+                            </div>
                         </div>
 
                         {/* Right Side - Login Only */}
@@ -225,9 +237,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                                     className="group p-8 rounded-3xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.05] hover:border-purple-500/30 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/20 h-full"
                                 >
                                     <div className={`inline-flex p-4 rounded-2xl bg-gradient-to-br ${track.color === 'purple' ? 'from-purple-500/20 to-indigo-500/20 text-purple-400' :
-                                            track.color === 'violet' ? 'from-violet-500/20 to-fuchsia-500/20 text-violet-400' :
-                                                track.color === 'indigo' ? 'from-indigo-500/20 to-blue-500/20 text-indigo-400' :
-                                                    'from-fuchsia-500/20 to-pink-500/20 text-fuchsia-400'
+                                        track.color === 'violet' ? 'from-violet-500/20 to-fuchsia-500/20 text-violet-400' :
+                                            track.color === 'indigo' ? 'from-indigo-500/20 to-blue-500/20 text-indigo-400' :
+                                                'from-fuchsia-500/20 to-pink-500/20 text-fuchsia-400'
                                         } mb-5 transform transition-transform group-hover:rotate-6`}>
                                         <track.icon className="w-7 h-7" />
                                     </div>
