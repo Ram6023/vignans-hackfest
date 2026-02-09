@@ -57,6 +57,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
         minutes: 0,
         seconds: 0
     });
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    // Track scroll position for header transparency
+    useEffect(() => {
+        const handleScroll = () => {
+            setIsScrolled(window.scrollY > 50);
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     // Countdown to hackathon start (Updated to 2026)
     useEffect(() => {
@@ -112,7 +123,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 </div>
 
                 {/* Navigation */}
-                <nav className="fixed top-0 left-0 right-0 z-50 px-8 py-6 backdrop-blur-sm bg-[#0a0a0f]/30 border-b border-white/5 transition-all duration-300">
+                <nav className={`fixed top-0 left-0 right-0 z-50 px-8 py-6 transition-all duration-300 ${isScrolled
+                    ? 'backdrop-blur-md bg-[#0a0a0f]/60 border-b border-white/10 shadow-lg shadow-black/20'
+                    : 'bg-transparent border-b border-transparent'
+                    }`}>
                     <div className="max-w-7xl mx-auto flex items-center justify-end">
                         <div className="hidden md:flex items-center space-x-12">
                             <a href="#tracks" className="nav-link-wavy text-lg text-white/60 hover:text-white transition-colors">Tracks</a>
@@ -125,38 +139,31 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 {/* Hero Content - Split Layout */}
                 <div className="relative z-10 max-w-7xl mx-auto px-8 pt-32">
 
-                    {/* Split: Left = Title, Right = Login */}
-                    <div className="flex flex-col lg:flex-row items-center justify-between gap-12 mb-16">
+                    {/* Main Header Row: Logo | Divider | Title | Login Button */}
+                    <div className="flex flex-col lg:flex-row items-center justify-between gap-8 mb-8">
 
-                        {/* Left Side - Title */}
-                        <div className="text-left flex-1 animate-fade-in-up flex flex-col items-center lg:items-start text-center lg:text-left">
-                            <div className="flex items-center gap-6 sm:gap-10 mb-8 w-full justify-center lg:justify-start">
-                                <img
-                                    src="/vignan-logo.png"
-                                    alt="Vignan Logo"
-                                    className="h-24 md:h-36 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] transition-transform hover:scale-105 duration-500"
-                                />
+                        {/* Left Side - Logo + Title */}
+                        <div className="animate-fade-in-up flex items-center gap-6 sm:gap-10">
+                            {/* Logo on the left */}
+                            <img
+                                src="/vignan-logo.png"
+                                alt="Vignan Logo"
+                                className="h-24 md:h-36 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] transition-transform hover:scale-105 duration-500"
+                            />
 
-                                {/* Vertical Divider Line & Tagline */}
-                                <div className="flex flex-col items-center gap-4">
-                                    <div className="h-20 md:h-28 w-px bg-white/20"></div>
-                                    <div className="absolute -bottom-12 left-[55%] -translate-x-1/2 whitespace-nowrap">
-                                        <p className="text-xl md:text-2xl text-white/40 font-medium tracking-wide">
-                                            Build <span className="text-white/70">·</span> Innovate <span className="text-white/70">·</span> Transform
-                                        </p>
-                                    </div>
-                                </div>
+                            {/* Vertical Divider Line */}
+                            <div className="h-20 md:h-28 w-px bg-white/20"></div>
 
-                                <div className="flex flex-col text-left">
-                                    <h1 className="hackathon-title text-5xl md:text-7xl lg:text-8xl mb-0 leading-[1.1]">
-                                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-100 to-indigo-100">
-                                            HACKFEST
-                                        </span>
-                                    </h1>
-                                    <p className="hackathon-title text-4xl md:text-6xl lg:text-7xl text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-violet-400 to-indigo-400 -mt-2">
-                                        2026
-                                    </p>
-                                </div>
+                            {/* Title - slightly to the right */}
+                            <div className="flex flex-col text-left pl-2">
+                                <h1 className="hackathon-title text-5xl md:text-7xl lg:text-8xl mb-0 leading-[1.1]">
+                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-100 to-indigo-100">
+                                        HACKFEST
+                                    </span>
+                                </h1>
+                                <p className="hackathon-title text-4xl md:text-6xl lg:text-7xl text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-violet-400 to-indigo-400 -mt-2">
+                                    2026
+                                </p>
                             </div>
                         </div>
 
@@ -178,6 +185,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                             </button>
                         </div>
                     </div>
+
+                    {/* Tagline - Centered below header */}
+                    <p className="text-xl md:text-2xl text-white/40 font-medium tracking-wide text-center mb-12">
+                        Build <span className="text-white/70">·</span> Innovate <span className="text-white/70">·</span> Transform
+                    </p>
 
                     {/* Countdown - Bigger */}
                     <FadeInSection delay="200ms">
