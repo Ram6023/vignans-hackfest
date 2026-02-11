@@ -3,6 +3,7 @@ import { Team, Announcement, HackathonConfig, Volunteer, User } from '../types';
 import { dbService } from '../services/mockDb';
 import { StatsCard } from '../components/StatsCard';
 import { AnnouncementFeed } from '../components/AnnouncementFeed';
+import { Timer } from '../components/Timer';
 import { Users, UserCheck, CheckCircle, Megaphone, Plus, Download, Edit2, Send, Eye, ExternalLink, Trophy, Medal, X, Loader2, Search, Filter, BarChart3, Sparkles, Clock, AlertCircle, FileText, Code2, Calculator, Info } from 'lucide-react';
 
 import { useRealtimeTeams, useRealtimeAnnouncements, useRealtimeNotifications } from '../hooks/useRealtime';
@@ -15,6 +16,7 @@ export const AdminDashboard: React.FC = () => {
 
     const [volunteers, setVolunteers] = useState<Volunteer[]>([]);
     const [judges, setJudges] = useState<User[]>([]);
+    const [config, setConfig] = useState<HackathonConfig | null>(null);
     const [newAnnouncement, setNewAnnouncement] = useState('');
     const [activeTab, setActiveTab] = useState<'overview' | 'teams' | 'volunteers' | 'submissions' | 'leaderboard'>('overview');
     const [selectedTeamForDetails, setSelectedTeamForDetails] = useState<Team | null>(null);
@@ -27,12 +29,14 @@ export const AdminDashboard: React.FC = () => {
     const [submissionFilter, setSubmissionFilter] = useState<'all' | 'reviewed' | 'pending'>('all');
 
     const fetchInitialData = async () => {
-        const [vols, jds] = await Promise.all([
+        const [vols, jds, cfg] = await Promise.all([
             dbService.getVolunteers(),
-            dbService.getJudges()
+            dbService.getJudges(),
+            dbService.getConfig()
         ]);
         setVolunteers(vols);
         setJudges(jds);
+        setConfig(cfg);
     };
 
     useEffect(() => {
@@ -263,6 +267,12 @@ export const AdminDashboard: React.FC = () => {
                     </button>
                 </div>
             </div>
+
+            {config && (
+                <div className="h-[220px]">
+                    <Timer startTime={config.startTime} endTime={config.endTime} />
+                </div>
+            )}
 
             {/* Tabs */}
             <div className="flex space-x-1 p-1.5 bg-white/50 backdrop-blur-sm rounded-2xl w-fit border border-white/40">

@@ -108,8 +108,22 @@ export function useRealtimeNotifications() {
     }, []);
 
     // Listen for WebSocket events and create notifications
-    useWebSocket(['TEAM_CREATED', 'TEAM_CHECKED_IN', 'TEAM_SUBMITTED', 'ANNOUNCEMENT_POSTED', 'SCORE_UPDATED'], (event) => {
+    useWebSocket(['TEAM_CREATED', 'TEAM_CHECKED_IN', 'TEAM_SUBMITTED', 'ANNOUNCEMENT_POSTED', 'SCORE_UPDATED', 'NOTIFICATION_POSTED', 'HELP_REQUESTED'], (event) => {
         switch (event.type) {
+            case 'NOTIFICATION_POSTED':
+                addNotification({
+                    type: 'info',
+                    title: 'System Notification',
+                    message: (event.payload as { message: string }).message
+                });
+                break;
+            case 'HELP_REQUESTED':
+                addNotification({
+                    type: 'warning',
+                    title: 'Help Requested',
+                    message: `${(event.payload as Team).name} needs assistance at Room ${(event.payload as Team).roomNumber}!`
+                });
+                break;
             case 'TEAM_CREATED':
                 addNotification({
                     type: 'info',

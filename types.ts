@@ -81,6 +81,19 @@ export interface Announcement {
   author: string;
   priority?: 'normal' | 'important' | 'urgent';
   category?: 'general' | 'food' | 'technical' | 'schedule' | 'submission';
+  isSticky?: boolean;
+}
+
+export interface HelpRequest {
+  id: string;
+  teamId: string;
+  teamName: string;
+  roomNumber: string;
+  tableNumber: string;
+  requestedAt: string;
+  status: 'pending' | 'addressed' | 'resolved';
+  message?: string;
+  assignedVolunteerId?: string;
 }
 
 export interface ScheduleEvent {
@@ -124,4 +137,5 @@ export interface DbSchema {
   config: HackathonConfig;
   schedule: ScheduleEvent[];
   problemStatements: ProblemStatement[];
+  helpRequests: HelpRequest[];
 }

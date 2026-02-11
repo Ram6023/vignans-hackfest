@@ -1,4 +1,4 @@
-import { DbSchema, Team, User, Volunteer, Announcement, HackathonConfig, ScheduleEvent, ProblemStatement } from '../types';
+import { DbSchema, Team, User, Volunteer, Announcement, HackathonConfig, ScheduleEvent, ProblemStatement, HelpRequest } from '../types';
 import { wsService } from './websocket';
 
 const DB_KEY = 'vignans_hackfest_prod_v1.3'; // Updated to include onboardingStatus
@@ -211,6 +211,7 @@ const initializeDb = (): DbSchema => {
     config: INITIAL_CONFIG,
     schedule: INITIAL_SCHEDULE,
     problemStatements: INITIAL_PROBLEM_STATEMENTS,
+    helpRequests: [],
   };
   localStorage.setItem(DB_KEY, JSON.stringify(db));
   return db;
@@ -689,5 +690,56 @@ export const dbService = {
     }
 
     return total;
+  },
+
+  // ========================================
+  // HELP REQUEST METHODS
+  // ========================================
+
+  async requestHelp(teamId: string, message?: string): Promise<HelpRequest> {
+    await delay(300);
+    const db = dbService.getDb();
+    const team = db.teams.find(t => t.id === teamId);
+    if (!team) throw new Error('Team not found');
+
+    const newRequest: HelpRequest = {
+      id: `help_${Date.now()}`,
+      teamId,
+      teamName: team.name,
+      roomNumber: team.roomNumber,
+      tableNumber: team.tableNumber,
+      requestedAt: new Date().toISOString(),
+      status: 'pending',
+      message,
+      assignedVolunteerId: team.assignedVolunteerId
+    };
+
+    db.helpRequests = db.helpRequests || [];
+    db.helpRequests.unshift(newRequest);
+    dbService.saveDb(db);
+
+    // Broadcast real-time
+    wsService.notificationPosted(`Team ${team.name} requested help!`);
+
+    return newRequest;
+  },
+
+  async getHelpRequests(volunteerId?: string): Promise<HelpRequest[]> {
+    await delay(200);
+    const db = dbService.getDb();
+    const requests = db.helpRequests || [];
+    if (volunteerId) {
+      return requests.filter(r => r.assignedVolunteerId === volunteerId);
+    }
+    return requests;
+  },
+
+  async updateHelpRequestStatus(requestId: string, status: HelpRequest['status']): Promise<void> {
+    await delay(200);
+    const db = dbService.getDb();
+    db.helpRequests = (db.helpRequests || []).map(r =>
+      r.id === requestId ? { ...r, status } : r
+    );
+    dbService.saveDb(db);
   }
 };

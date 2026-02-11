@@ -10,6 +10,7 @@ import { JudgeDashboard } from './pages/JudgeDashboard';
 import { Layout } from './components/Layout';
 import { wsService } from './services/websocket';
 import usePWA, { OfflineIndicator, InstallPrompt } from './hooks/usePWA';
+import { notificationService } from './services/notificationService';
 
 type AppView = 'landing' | 'login' | 'register' | 'dashboard';
 
@@ -23,6 +24,9 @@ const App: React.FC = () => {
   useEffect(() => {
     // Initialize WebSocket connection
     wsService.connect().catch(console.error);
+
+    // Setup Notification Listeners
+    notificationService.setupRealtimeListeners();
 
     // Check local storage for session
     const storedUser = localStorage.getItem('vignan_user_session');

@@ -12,6 +12,8 @@ export type WebSocketEventType =
     | 'VOLUNTEER_ASSIGNED'
     | 'SCORE_UPDATED'
     | 'USER_JOINED'
+    | 'NOTIFICATION_POSTED'
+    | 'HELP_REQUESTED'
     | 'SCHEDULE_UPDATED';
 
 export interface WebSocketEvent {
@@ -166,6 +168,14 @@ class WebSocketService {
         this.broadcast({
             type: 'VOLUNTEER_ASSIGNED',
             payload: data,
+            timestamp: new Date().toISOString()
+        });
+    }
+
+    notificationPosted(message: string) {
+        this.broadcast({
+            type: 'NOTIFICATION_POSTED',
+            payload: { message },
             timestamp: new Date().toISOString()
         });
     }

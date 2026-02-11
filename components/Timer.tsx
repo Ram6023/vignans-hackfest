@@ -2,27 +2,42 @@ import React, { useEffect, useState } from 'react';
 import { Clock, AlertCircle, Flame, Zap } from 'lucide-react';
 
 interface TimerProps {
+  startTime?: string;
   endTime: string;
 }
 
-export const Timer: React.FC<TimerProps> = ({ endTime }) => {
+export const Timer: React.FC<TimerProps> = ({ startTime, endTime }) => {
   const [timeLeft, setTimeLeft] = useState<{ hours: number; minutes: number; seconds: number } | null>(null);
-  const [status, setStatus] = useState<'running' | 'ending' | 'ended'>('running');
+  const [status, setStatus] = useState<'starting' | 'running' | 'ending' | 'ended'>('running');
 
   useEffect(() => {
     const calculateTimeLeft = () => {
-      const difference = +new Date(endTime) - +new Date();
+      const now = +new Date();
+      const start = startTime ? +new Date(startTime) : 0;
+      const end = +new Date(endTime);
 
-      if (difference > 0) {
-        const hours = Math.floor((difference / (1000 * 60 * 60)));
+      if (start > now) {
+        // Hasn't started yet
+        const difference = start - now;
+        const hours = Math.floor(difference / (1000 * 60 * 60));
         setTimeLeft({
           hours,
           minutes: Math.floor((difference / 1000 / 60) % 60),
           seconds: Math.floor((difference / 1000) % 60),
         });
-        // Set to ending status when less than 1 hour remains
+        setStatus('starting');
+      } else if (end > now) {
+        // Hackathon is live
+        const difference = end - now;
+        const hours = Math.floor(difference / (1000 * 60 * 60));
+        setTimeLeft({
+          hours,
+          minutes: Math.floor((difference / 1000 / 60) % 60),
+          seconds: Math.floor((difference / 1000) % 60),
+        });
         setStatus(hours < 1 ? 'ending' : 'running');
       } else {
+        // Finished
         setTimeLeft({ hours: 0, minutes: 0, seconds: 0 });
         setStatus('ended');
       }
@@ -38,6 +53,16 @@ export const Timer: React.FC<TimerProps> = ({ endTime }) => {
 
   const getStatusConfig = () => {
     switch (status) {
+      case 'starting':
+        return {
+          gradient: 'from-blue-600 via-indigo-600 to-violet-600',
+          glow: 'bg-blue-500/20',
+          accent: 'text-blue-400',
+          accentBg: 'bg-blue-500/20 border-blue-500/30',
+          ring: 'ring-blue-400/30',
+          label: 'Starting Soon',
+          icon: Clock
+        };
       case 'ending':
         return {
           gradient: 'from-amber-600 via-orange-600 to-rose-600',

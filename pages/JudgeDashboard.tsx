@@ -205,7 +205,7 @@ export const JudgeDashboard: React.FC<JudgeDashboardProps> = ({ judgeId }) => {
             {/* Header Section */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 h-[260px]">
-                    <Timer endTime={config.endTime} />
+                    <Timer startTime={config.startTime} endTime={config.endTime} />
                 </div>
 
                 <div className="glass-card rounded-[2rem] p-8 flex flex-col justify-center relative overflow-hidden border border-white/60">
