@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Team, Announcement, HackathonConfig, Volunteer, User } from '../types';
+import { DbSchema, Team, Volunteer, Announcement, HackathonConfig, ProblemStatement, User } from '../types/index';
 import { dbService } from '../services/mockDb';
 import { StatsCard } from '../components/StatsCard';
 import { AnnouncementFeed } from '../components/AnnouncementFeed';
