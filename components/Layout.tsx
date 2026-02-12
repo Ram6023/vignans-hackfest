@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User } from '../types';
+import { User } from '../types/index';
 import { LogOut, Rocket, Zap, Menu, X, Settings, ChevronDown, User as UserIcon, Shield, Users, Wifi, WifiOff, Award } from 'lucide-react';
 import { NotificationCenter } from './NotificationCenter';
 import { useConnectionStatus } from '../hooks/useRealtime';
