@@ -99,7 +99,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onRegister, onBack }
                 roomNumber: `R-${Math.floor(Math.random() * 5) + 1}0${Math.floor(Math.random() * 9) + 1}`,
                 tableNumber: `T-${Math.floor(Math.random() * 30) + 1}`,
                 wifiSsid: 'Vignan-Guest',
-                wifiPass: 'Hackfest2024!',
+                wifiPass: 'Hackify2026!',
                 assignedVolunteerId: randomVolunteer?.id || '',
                 isCheckedIn: false,
                 score: 0,
