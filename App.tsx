@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Team } from './types';
+import { User, Team } from './types/index';
 import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
