@@ -104,7 +104,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onShowRegister })
             </div>
             <div className="flex flex-col">
               <span className="text-2xl xl:text-3xl font-black tracking-tight bg-gradient-to-r from-white via-violet-200 to-purple-200 bg-clip-text text-transparent drop-shadow-lg" style={{ fontFamily: "'Inter', 'Outfit', system-ui, sans-serif" }}>
-                Hackfest
+                Hackify
               </span>
               <span className="text-sm font-bold tracking-widest uppercase bg-gradient-to-r from-violet-400 via-purple-300 to-blue-400 bg-clip-text text-transparent">
                 2026 Edition
@@ -178,7 +178,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onShowRegister })
                 className="h-16 drop-shadow-lg"
               />
             </div>
-            <h2 className="text-xl font-bold text-slate-900">Vignan's Hackfest</h2>
+            <h2 className="text-xl font-bold text-slate-900">Vignan's Hackify</h2>
           </div>
 
           {/* Header */}
@@ -307,7 +307,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onShowRegister })
 
           {/* Footer */}
           <p className="text-center text-sm text-slate-400 font-medium">
-            © 2026 Vignan's Hackfest. Built for innovators.
+            © 2026 Vignan's Hackify. Built for innovators.
           </p>
         </div>
       </div>

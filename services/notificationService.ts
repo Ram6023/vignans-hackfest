@@ -31,7 +31,7 @@ class NotificationService {
                         badge: '/icons/icon-72x72.png',
                         vibrate: [200, 100, 200],
                         ...options
-                    });
+                    } as any);
                 });
             } else {
                 // Fallback to standard Notification
@@ -50,7 +50,7 @@ class NotificationService {
                 body: announcement.message,
                 tag: 'announcement',
                 renotify: true
-            });
+            } as any);
         });
 
         wsService.on('HELP_REQUESTED', (event) => {

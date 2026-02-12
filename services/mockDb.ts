@@ -1,12 +1,12 @@
 import { DbSchema, Team, User, Volunteer, Announcement, HackathonConfig, ScheduleEvent, ProblemStatement, HelpRequest } from '../types';
 import { wsService } from './websocket';
 
-const DB_KEY = 'vignans_hackfest_prod_v1.3'; // Updated to include onboardingStatus
+const DB_KEY = 'vignans_hackify_prod_v1.0'; // Updated for rebranding to Hackify
 
 const INITIAL_CONFIG: HackathonConfig = {
   startTime: new Date('2026-02-26T09:00:00').toISOString(),
   endTime: new Date('2026-02-27T09:00:00').toISOString(),
-  eventName: "Vignan's Hackfest 2026",
+  eventName: "Vignan's Hackify 2026",
   venue: 'Vignan University Campus, Main Auditorium',
   maxTeamSize: 4,
   minTeamSize: 2,
@@ -51,7 +51,7 @@ const INITIAL_TEAMS: Team[] = [
     problemStatement: 'Smart City Traffic Management',
     roomNumber: 'Main Hall',
     tableNumber: '42',
-    wifiSsid: 'Hackfest_Guest',
+    wifiSsid: 'Hackify_Guest',
     wifiPass: 'innovate2026',
     assignedVolunteerId: 'volunteer-1',
     isCheckedIn: true,
@@ -76,7 +76,7 @@ const INITIAL_TEAMS: Team[] = [
     problemStatement: 'Sustainable Energy Grid',
     roomNumber: 'Room 204',
     tableNumber: '15',
-    wifiSsid: 'Hackfest_Guest',
+    wifiSsid: 'Hackify_Guest',
     wifiPass: 'innovate2026',
     assignedVolunteerId: 'volunteer-2',
     isCheckedIn: false,
@@ -93,7 +93,7 @@ const INITIAL_TEAMS: Team[] = [
     problemStatement: 'Health-Track AI',
     roomNumber: 'Room 301',
     tableNumber: '08',
-    wifiSsid: 'Hackfest_Guest',
+    wifiSsid: 'Hackify_Guest',
     wifiPass: 'innovate2026',
     assignedVolunteerId: 'volunteer-1',
     isCheckedIn: false,
@@ -174,7 +174,7 @@ const INITIAL_PROBLEM_STATEMENTS: ProblemStatement[] = [
 const INITIAL_ANNOUNCEMENTS: Announcement[] = [
   {
     id: 'ann1',
-    message: 'Welcome to Vignan\'s Hackfest 2026! Let the innovation begin.',
+    message: 'Welcome to Vignan\'s Hackify 2026! Let the innovation begin.',
     createdAt: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
     author: 'Admin',
     priority: 'normal',

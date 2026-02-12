@@ -1,9 +1,9 @@
 <div align="center">
 
-# 🚀 VIGNAN'S HACKFEST 2026
+# 🚀 VIGNAN'S HACKIFY 2026
 ## *Innovation Meets Execution*
 
-![Hackfest Banner](https://capsule-render.vercel.app/api?type=waving&color=7c3aed&height=300&section=header&text=Vignan's%20Hackfest%202026&fontSize=60&animation=fadeIn&fontAlignY=38&desc=Build%20·%20Innovate%20·%20Transform&descAlignY=55&descAlign=50)
+![Hackify Banner](https://capsule-render.vercel.app/api?type=waving&color=7c3aed&height=300&section=header&text=Vignan's%20Hackify%202026&fontSize=60&animation=fadeIn&fontAlignY=38&desc=Build%20·%20Innovate%20·%20Transform&descAlignY=55&descAlign=50)
 
 <a href="">
   <img src="https://img.shields.io/badge/Status-Live-success?style=for-the-badge&logo=statuspage" alt="Status" />
@@ -39,7 +39,7 @@ This is a **Progressive Web App (PWA)** — install it on your device for the be
 
 ### 📲 Mobile (Android/iOS)
 1. Open the app in your browser
-2. Tap the **"Install Hackfest"** banner
+2. Tap the **"Install Hackify"** banner
 3. Or use: **Menu → Add to Home Screen**
 4. Enjoy native app experience!
 

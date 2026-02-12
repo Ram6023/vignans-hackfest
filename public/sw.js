@@ -1,7 +1,7 @@
-// Vignan's Hackfest 2026 - Service Worker
-const CACHE_NAME = 'hackfest-v1.0.0';
-const STATIC_CACHE = 'hackfest-static-v1';
-const DYNAMIC_CACHE = 'hackfest-dynamic-v1';
+// Vignan's Hackify 2026 - Service Worker
+const CACHE_NAME = 'hackify-v1.0.0';
+const STATIC_CACHE = 'hackify-static-v1';
+const DYNAMIC_CACHE = 'hackify-dynamic-v1';
 
 // Assets to cache on install
 const STATIC_ASSETS = [
@@ -122,22 +122,19 @@ self.addEventListener('fetch', (event) => {
 // Handle push notifications (for future use)
 self.addEventListener('push', (event) => {
     const options = {
-        body: event.data?.text() || 'New update from Hackfest!',
+        body: event.data?.text() || 'New update from Hackify!',
         icon: '/icons/icon-192x192.png',
         badge: '/icons/icon-72x72.png',
-        vibrate: [100, 50, 100],
+        vibrate: [200, 100, 200],
+        tag: 'hackathon-update',
+        renotify: true,
         data: {
-            dateOfArrival: Date.now(),
-            primaryKey: 1
-        },
-        actions: [
-            { action: 'view', title: 'View', icon: '/icons/icon-96x96.png' },
-            { action: 'close', title: 'Close' }
-        ]
+            url: '/'
+        }
     };
 
     event.waitUntil(
-        self.registration.showNotification("Vignan's Hackfest 2026", options)
+        self.registration.showNotification("Vignan's Hackify 2026", options)
     );
 });
 

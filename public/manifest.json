@@ -1,7 +1,7 @@
 {
-    "name": "Vignan's Hackfest 2026",
-    "short_name": "Hackfest",
-    "description": "Vignan's Hackfest 2026 - Official Management Portal for teams, volunteers, judges, and administrators. Build. Innovate. Transform.",
+    "name": "Vignan's Hackify 2026",
+    "short_name": "Hackify",
+    "description": "Vignan's Hackify 2026 - Official Management Portal for teams, volunteers, judges, and administrators. Build. Innovate. Transform.",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#0f172a",
@@ -70,7 +70,7 @@
             "sizes": "1280x720",
             "type": "image/png",
             "form_factor": "wide",
-            "label": "Hackfest Dashboard"
+            "label": "Hackify Dashboard"
         },
         {
             "src": "/screenshots/mobile.png",

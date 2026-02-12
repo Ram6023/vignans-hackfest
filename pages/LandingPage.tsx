@@ -158,7 +158,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                             <div className="flex flex-col text-left pl-2">
                                 <h1 className="hackathon-title text-5xl md:text-7xl lg:text-8xl mb-0 leading-[1.1]">
                                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-100 to-indigo-100">
-                                        HACKFEST
+                                        HACKIFY
                                     </span>
                                 </h1>
                                 <p className="hackathon-title text-4xl md:text-6xl lg:text-7xl text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-violet-400 to-indigo-400 -mt-2">

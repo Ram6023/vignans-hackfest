@@ -33,7 +33,7 @@ class WebSocketService {
 
     constructor() {
         this.connectionId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-        this.channel = new BroadcastChannel('hackfest_realtime');
+        this.channel = new BroadcastChannel('hackify_realtime');
         this.setupListeners();
     }
 
@@ -53,7 +53,7 @@ class WebSocketService {
     connect(): Promise<void> {
         return new Promise((resolve) => {
             if (!this.isConnected) {
-                this.channel = new BroadcastChannel('hackfest_realtime');
+                this.channel = new BroadcastChannel('hackify_realtime');
                 this.setupListeners();
             }
             // Broadcast that a new user joined

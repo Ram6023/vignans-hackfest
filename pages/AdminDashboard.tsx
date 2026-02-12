@@ -131,7 +131,7 @@ export const AdminDashboard: React.FC = () => {
 
         const link = document.createElement("a");
         link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `hackfest_export_${new Date().toISOString().slice(0, 10)}.csv`);
+        link.setAttribute("download", `hackify_export_${new Date().toISOString().slice(0, 10)}.csv`);
         document.body.appendChild(link);
         link.click();
         link.remove();
@@ -171,16 +171,17 @@ export const AdminDashboard: React.FC = () => {
         const newTeam: Team = {
             id: `t${Date.now()}`,
             name,
-            email: email || `team${Date.now()}@hackfest.com`,
+            email: email || `team${Date.now()}@hackify.com`,
             members: [],
             problemStatement: 'Not assigned yet',
             roomNumber: 'TBD',
             tableNumber: 'TBD',
-            wifiSsid: 'Hackfest-Guest',
+            wifiSsid: 'Hackify-Guest',
             wifiPass: 'welcome123',
             assignedVolunteerId: '',
             isCheckedIn: false,
-            score: 0
+            score: 0,
+            onboardingStatus: 'not_started'
         };
 
         await dbService.createTeam(newTeam);
@@ -197,7 +198,7 @@ export const AdminDashboard: React.FC = () => {
         const newVolunteer: Volunteer = {
             id: `v${Date.now()}`,
             name,
-            email: email || `vol${Date.now()}@hackfest.com`,
+            email: email || `vol${Date.now()}@hackify.com`,
             phone: '',
             role: 'Floor Support',
             isAvailable: true
