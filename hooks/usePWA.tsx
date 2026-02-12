@@ -162,7 +162,7 @@ export function InstallPrompt({
                 </svg>
             </div>
             <div className="install-prompt-content">
-                <div className="install-prompt-title">Install Hackfest</div>
+                <div className="install-prompt-title">Install Hackify</div>
                 <div className="install-prompt-text">Add to home screen for quick access</div>
             </div>
             <button className="install-prompt-btn" onClick={onInstall}>
