@@ -23,7 +23,7 @@
 **The official innovation portal for Vignan University's premier 24-hour hackathon.**  
 *A Progressive Web App that works everywhere — desktop, mobile, and offline.*
 
-[**🌐 Live Demo**](https://vignans-hackfest.vercel.app) · [**🐛 Report Bug**](https://github.com/Ram6023/vignans-hackfest/issues) · [**✨ Request Feature**](https://github.com/Ram6023/vignans-hackfest/issues)
+[**🌐 Live Demo**](https://vignans-hackify.vercel.app) · [**🐛 Report Bug**](https://github.com/Ram6023/vignans-hackfest/issues) · [**✨ Request Feature**](https://github.com/Ram6023/vignans-hackfest/issues)
 
 </div>
 
