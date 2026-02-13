@@ -16,42 +16,26 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onShowRegister })
   const [isLoading, setIsLoading] = useState(false);
   const [focusedField, setFocusedField] = useState<'email' | 'password' | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    setIsLoading(true);
-
-    try {
-      const user = await dbService.login(email, password);
-      if (user) {
-        onLogin(user);
-      } else {
-        setError('Invalid credentials. Please check your email and password.');
-      }
-    } catch (err) {
-      setError('Login failed. Please try again.');
-    } finally {
-      setIsLoading(false);
+    const user = dbService.login(email, password);
+    if (user) {
+      onLogin(user);
+    } else {
+      setError('Invalid credentials. Please check your email and password.');
     }
   };
 
-  const handleQuickLogin = async (userEmail: string, userPassword: string) => {
+  const handleQuickLogin = (userEmail: string, userPassword: string) => {
     setEmail(userEmail);
     setPassword(userPassword);
     setError('');
-    setIsLoading(true);
-
-    try {
-      const user = await dbService.login(userEmail, userPassword);
-      if (user) {
-        onLogin(user);
-      } else {
-        setError('Quick login failed');
-      }
-    } catch (err) {
-      setError('Login failed');
-    } finally {
-      setIsLoading(false);
+    const user = dbService.login(userEmail, userPassword);
+    if (user) {
+      onLogin(user);
+    } else {
+      setError('Quick login failed');
     }
   };
 

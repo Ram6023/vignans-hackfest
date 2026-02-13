@@ -174,8 +174,7 @@ export const dbService = {
     return initializeDb();
   },
 
-  async login(email: string, password: string): Promise<User | null> {
-    await delay(100);
+  login(email: string, password: string): User | null {
     const db = dbService.getDb();
     if (password.length < 3) return null;
     const user = db.users.find(u => u.email === email);
