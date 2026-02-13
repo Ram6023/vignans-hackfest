@@ -23,7 +23,7 @@
 **The official innovation portal for Vignan University's premier 24-hour hackathon.**  
 *A Progressive Web App that works everywhere — desktop, mobile, and offline.*
 
-[**🌐 Live Demo**](https://vignans-hackify.vercel.app) · [**🐛 Report Bug**](https://github.com/Ram6023/vignans-hackfest/issues) · [**✨ Request Feature**](https://github.com/Ram6023/vignans-hackfest/issues)
+[**🌐 Live Demo**](https://vignans-hackify.vercel.app) · [**🐛 Report Bug**](https://github.com/Ram6023/vignans-hackify/issues) · [**✨ Request Feature**](https://github.com/Ram6023/vignans-hackify/issues)
 
 </div>
 
@@ -91,8 +91,8 @@ Ready to hack? Follow these simple steps to get the portal running locally.
 
 ### **1. Clone the Repo**
 ```bash
-git clone https://github.com/Ram6023/vignans-hackfest.git
-cd vignans-hackfest
+git clone https://github.com/Ram6023/vignans-hackify.git
+cd vignans-hackify
 ```
 
 ### **2. Install Dependencies**
@@ -118,7 +118,7 @@ npm run preview
 ## 📂 **Project Architecture**
 
 ```bash
-vignans-hackfest/
+vignans-hackify/
 ├── 📂 components/        # 🧩 Reusable UI Components
 │   ├── Layout.tsx        # Main app layout
 │   ├── Timer.tsx         # Hackathon countdown
@@ -222,8 +222,8 @@ GEMINI_API_KEY=your_api_key_here
 
 *We love open source! PRs are welcome.*
 
-<a href="https://github.com/Ram6023/vignans-hackfest/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=Ram6023/vignans-hackfest" />
+<a href="https://github.com/Ram6023/vignans-hackify/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Ram6023/vignans-hackify" />
 </a>
 
 <br/>
@@ -232,7 +232,7 @@ GEMINI_API_KEY=your_api_key_here
 
 If you find this useful, please give it a star! It helps others discover the project.
 
-[![GitHub stars](https://img.shields.io/github/stars/Ram6023/vignans-hackfest?style=social)](https://github.com/Ram6023/vignans-hackfest)
+[![GitHub stars](https://img.shields.io/github/stars/Ram6023/vignans-hackify?style=social)](https://github.com/Ram6023/vignans-hackify)
 
 <br/>
 
