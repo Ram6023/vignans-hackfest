@@ -6,7 +6,7 @@ const DB_KEY = 'vignans_hackify_prod_v1.0'; // Updated for rebranding to Hackify
 const INITIAL_CONFIG: HackathonConfig = {
   startTime: new Date('2026-02-26T09:00:00').toISOString(),
   endTime: new Date('2026-02-27T09:00:00').toISOString(),
-  eventName: "Vignan's Hackify 2026",
+  eventName: "VHACK 2.0 2K26",
   venue: 'Vignan University Campus, Main Auditorium',
   maxTeamSize: 4,
   minTeamSize: 2,
@@ -42,67 +42,7 @@ const INITIAL_VOLUNTEERS: Volunteer[] = [
   }
 ];
 
-const INITIAL_TEAMS: Team[] = [
-  {
-    id: 'team-1',
-    name: 'Alpha Coders',
-    email: 'team@vignan.com',
-    members: ['Alex Rivera', 'Jordan Smith', 'Taylor Chen'],
-    problemStatement: 'Smart City Traffic Management',
-    roomNumber: 'Main Hall',
-    tableNumber: '42',
-    wifiSsid: 'Hackify_Guest',
-    wifiPass: 'innovate2026',
-    assignedVolunteerId: 'volunteer-1',
-    isCheckedIn: true,
-    checkInTime: new Date(Date.now() - 1000 * 60 * 60 * 1.5).toISOString(),
-    onboardingStatus: 'active',
-    sessions: [
-      {
-        id: 'sess-1',
-        type: 'active',
-        startTime: new Date(Date.now() - 1000 * 60 * 60 * 1.5).toISOString(),
-      }
-    ],
-    currentSessionStart: new Date(Date.now() - 1000 * 60 * 60 * 1.5).toISOString(),
-    totalActiveTime: 0,
-    totalBreakTime: 0
-  },
-  {
-    id: 'team-2',
-    name: 'Byte Busters',
-    email: 'byte@vignan.com',
-    members: ['Maya Patel', 'Liam Wong'],
-    problemStatement: 'Sustainable Energy Grid',
-    roomNumber: 'Room 204',
-    tableNumber: '15',
-    wifiSsid: 'Hackify_Guest',
-    wifiPass: 'innovate2026',
-    assignedVolunteerId: 'volunteer-2',
-    isCheckedIn: false,
-    onboardingStatus: 'not_started',
-    sessions: [],
-    totalActiveTime: 0,
-    totalBreakTime: 0
-  },
-  {
-    id: 'team-3',
-    name: 'Code Ninjas',
-    email: 'ninjas@vignan.com',
-    members: ['Priya Sharma', 'Raj Kumar', 'Anita Desai'],
-    problemStatement: 'Health-Track AI',
-    roomNumber: 'Room 301',
-    tableNumber: '08',
-    wifiSsid: 'Hackify_Guest',
-    wifiPass: 'innovate2026',
-    assignedVolunteerId: 'volunteer-1',
-    isCheckedIn: false,
-    onboardingStatus: 'not_started',
-    sessions: [],
-    totalActiveTime: 0,
-    totalBreakTime: 0
-  }
-];
+const INITIAL_TEAMS: Team[] = [];
 
 const INITIAL_SCHEDULE: ScheduleEvent[] = [
   {
@@ -126,7 +66,7 @@ const INITIAL_SCHEDULE: ScheduleEvent[] = [
   },
   {
     id: '3',
-    title: 'Lunch Break',
+    title: 'Lunch Break (Day 1)',
     description: 'Refresh and recharge',
     startTime: new Date('2026-02-26T13:00:00').toISOString(),
     endTime: new Date('2026-02-26T14:00:00').toISOString(),
@@ -135,12 +75,21 @@ const INITIAL_SCHEDULE: ScheduleEvent[] = [
   },
   {
     id: '4',
-    title: 'Technical Workshop',
-    description: 'Introduction to Cloud Infrastructure',
-    startTime: new Date('2026-02-26T16:00:00').toISOString(),
-    endTime: new Date('2026-02-26T17:00:00').toISOString(),
-    type: 'workshop',
-    location: 'Seminar Hall'
+    title: 'Dinner (Day 1)',
+    description: 'Fuel for the night',
+    startTime: new Date('2026-02-26T20:00:00').toISOString(),
+    endTime: new Date('2026-02-26T21:00:00').toISOString(),
+    type: 'meal',
+    location: 'Food Court'
+  },
+  {
+    id: '5',
+    title: 'Round 1: Idea Elevation',
+    description: 'Pitch your initial idea and architecture',
+    startTime: new Date('2026-02-26T11:00:00').toISOString(),
+    endTime: new Date('2026-02-26T13:00:00').toISOString(),
+    type: 'judging',
+    location: 'Hacking Bays'
   }
 ];
 
@@ -168,33 +117,24 @@ const INITIAL_PROBLEM_STATEMENTS: ProblemStatement[] = [
     category: 'Healthcare',
     difficulty: 'intermediate',
     sponsor: 'Vignan Biotech'
+  },
+  {
+    id: 'ps4',
+    title: 'Open Innovation',
+    description: 'Got a revolutionary idea that doesn\'t fit the tracks? Build it here.',
+    category: 'General',
+    difficulty: 'beginner',
   }
 ];
 
 const INITIAL_ANNOUNCEMENTS: Announcement[] = [
   {
     id: 'ann1',
-    message: 'Welcome to Vignan\'s Hackify 2026! Let the innovation begin.',
-    createdAt: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
-    author: 'Admin',
-    priority: 'normal',
-    category: 'general'
-  },
-  {
-    id: 'ann2',
-    message: 'Technical workshop on Cloud Infrastructure starting in 15 mins in Seminar Hall.',
-    createdAt: new Date(Date.now() - 1000 * 60 * 10).toISOString(),
+    message: 'Welcome to VHACK 2.0 2K26! Registration is now open. Pick your challenge and start building!',
+    createdAt: new Date().toISOString(),
     author: 'Admin',
     priority: 'important',
-    category: 'technical'
-  },
-  {
-    id: 'ann3',
-    message: 'Food token distribution has started at the registration desk.',
-    createdAt: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
-    author: 'Admin',
-    priority: 'normal',
-    category: 'food'
+    category: 'general'
   }
 ];
 

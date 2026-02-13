@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { DbSchema, Team, Volunteer, Announcement, HackathonConfig, ProblemStatement, User } from '../types/index';
+import { DbSchema, Team, Volunteer, Announcement, HackathonConfig, ProblemStatement, User, HelpRequest } from '../types/index';
 import { dbService } from '../services/mockDb';
 import { StatsCard } from '../components/StatsCard';
 import { AnnouncementFeed } from '../components/AnnouncementFeed';
 import { Timer } from '../components/Timer';
-import { Users, UserCheck, CheckCircle, Megaphone, Plus, Download, Edit2, Send, Eye, ExternalLink, Trophy, Medal, X, Loader2, Search, Filter, BarChart3, Sparkles, Clock, AlertCircle, FileText, Code2, Calculator, Info } from 'lucide-react';
+import { Users, UserCheck, CheckCircle, Megaphone, Plus, Download, Edit2, Send, Eye, ExternalLink, Trophy, Medal, X, Loader2, Search, Filter, BarChart3, Sparkles, Clock, AlertCircle, FileText, Code2, Calculator, Info, LifeBuoy } from 'lucide-react';
 
 import { useRealtimeTeams, useRealtimeAnnouncements, useRealtimeNotifications } from '../hooks/useRealtime';
 
@@ -18,7 +18,8 @@ export const AdminDashboard: React.FC = () => {
     const [judges, setJudges] = useState<User[]>([]);
     const [config, setConfig] = useState<HackathonConfig | null>(null);
     const [newAnnouncement, setNewAnnouncement] = useState('');
-    const [activeTab, setActiveTab] = useState<'overview' | 'teams' | 'volunteers' | 'submissions' | 'leaderboard'>('overview');
+    const [helpRequests, setHelpRequests] = useState<HelpRequest[]>([]);
+    const [activeTab, setActiveTab] = useState<'overview' | 'teams' | 'volunteers' | 'submissions' | 'leaderboard' | 'help'>('overview');
     const [selectedTeamForDetails, setSelectedTeamForDetails] = useState<Team | null>(null);
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
     const [isPosting, setIsPosting] = useState(false);
@@ -29,18 +30,25 @@ export const AdminDashboard: React.FC = () => {
     const [submissionFilter, setSubmissionFilter] = useState<'all' | 'reviewed' | 'pending'>('all');
 
     const fetchInitialData = async () => {
-        const [vols, jds, cfg] = await Promise.all([
+        const [vols, jds, cfg, reqs] = await Promise.all([
             dbService.getVolunteers(),
             dbService.getJudges(),
-            dbService.getConfig()
+            dbService.getConfig(),
+            dbService.getHelpRequests()
         ]);
         setVolunteers(vols);
         setJudges(jds);
         setConfig(cfg);
+        setHelpRequests(reqs);
     };
 
     useEffect(() => {
         fetchInitialData();
+        const interval = setInterval(async () => {
+            const reqs = await dbService.getHelpRequests();
+            setHelpRequests(reqs);
+        }, 10000);
+        return () => clearInterval(interval);
     }, []);
 
     const handlePostAnnouncement = async (e: React.FormEvent) => {
@@ -58,6 +66,12 @@ export const AdminDashboard: React.FC = () => {
         } finally {
             setIsPosting(false);
         }
+    };
+
+    const handleResolveHelp = async (id: string) => {
+        await dbService.updateHelpRequestStatus(id, 'resolved');
+        const reqs = await dbService.getHelpRequests();
+        setHelpRequests(reqs);
     };
 
     const markSubmissionViewed = async (team: Team) => {
@@ -94,7 +108,7 @@ export const AdminDashboard: React.FC = () => {
         const rows = teams.map(t => {
             const volunteer = volunteers.find(v => v.id === t.assignedVolunteerId);
             const judge = judges.find(j => j.id === t.assignedJudgeId);
-            const memberNames = t.members ? t.members.map(m => m.name).join("; ") : "";
+            const memberNames = t.members ? t.members.join("; ") : "";
             const volunteerName = volunteer ? volunteer.name : "Unassigned";
             const judgeName = judge ? judge.name : "Unassigned";
             const status = t.submissionViewed ? "Reviewed" : "Pending";
@@ -131,7 +145,7 @@ export const AdminDashboard: React.FC = () => {
 
         const link = document.createElement("a");
         link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `hackify_export_${new Date().toISOString().slice(0, 10)}.csv`);
+        link.setAttribute("download", `vhack_export_${new Date().toISOString().slice(0, 10)}.csv`);
         document.body.appendChild(link);
         link.click();
         link.remove();
@@ -171,12 +185,12 @@ export const AdminDashboard: React.FC = () => {
         const newTeam: Team = {
             id: `t${Date.now()}`,
             name,
-            email: email || `team${Date.now()}@hackify.com`,
+            email: email || `team${Date.now()}@vhack.com`,
             members: [],
             problemStatement: 'Not assigned yet',
             roomNumber: 'TBD',
             tableNumber: 'TBD',
-            wifiSsid: 'Hackify-Guest',
+            wifiSsid: 'VHACK-Guest',
             wifiPass: 'welcome123',
             assignedVolunteerId: '',
             isCheckedIn: false,
@@ -198,7 +212,7 @@ export const AdminDashboard: React.FC = () => {
         const newVolunteer: Volunteer = {
             id: `v${Date.now()}`,
             name,
-            email: email || `vol${Date.now()}@hackify.com`,
+            email: email || `vol${Date.now()}@vhack.com`,
             phone: '',
             role: 'Floor Support',
             isAvailable: true
@@ -215,7 +229,7 @@ export const AdminDashboard: React.FC = () => {
     const totalTeams = teams.length;
     const checkedInTeams = teams.filter(t => t.isCheckedIn).length;
     const submittedTeams = teams.filter(t => t.submissionLink).length;
-    const viewedTeams = teams.filter(t => t.submissionViewed).length;
+    const pendingHelp = helpRequests.filter(r => r.status === 'pending').length;
 
     const sortedTeams = [...teams].sort((a, b) => (b.score || 0) - (a.score || 0));
     const filteredTeams = teams.filter(t =>
@@ -228,6 +242,7 @@ export const AdminDashboard: React.FC = () => {
         { id: 'teams', label: 'Teams', icon: Users },
         { id: 'submissions', label: 'Submissions', icon: FileText },
         { id: 'volunteers', label: 'Volunteers', icon: UserCheck },
+        { id: 'help', label: 'Assistance', icon: LifeBuoy },
         { id: 'leaderboard', label: 'Leaderboard', icon: Trophy },
     ] as const;
 
@@ -417,7 +432,7 @@ export const AdminDashboard: React.FC = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-2 space-y-8">
                         {/* Stats Cards */}
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-4 gap-6">
                             <StatsCard
                                 title="Total Teams"
                                 value={totalTeams}
@@ -439,12 +454,48 @@ export const AdminDashboard: React.FC = () => {
                                 color="purple"
                                 subtitle={`${totalTeams - submittedTeams} pending`}
                             />
+                            <StatsCard
+                                title="Pending Help"
+                                value={pendingHelp}
+                                icon={LifeBuoy}
+                                color="red"
+                                subtitle="Needs assistance"
+                            />
+                        </div>
+
+                        {/* Top 3 Leaderboard Summary */}
+                        <div className="glass-card rounded-3xl p-6 sm:p-8 border border-white/60 bg-gradient-to-br from-amber-50/30 to-white">
+                            <div className="flex justify-between items-center mb-6">
+                                <h3 className="text-xl font-bold text-slate-900 flex items-center">
+                                    <Trophy className="w-5 h-5 mr-2 text-amber-500" />
+                                    Top 3 Contenders
+                                </h3>
+                                <button onClick={() => setActiveTab('leaderboard')} className="text-xs font-bold text-violet-600 hover:text-violet-700 transition-colors uppercase tracking-widest">View All</button>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                {sortedTeams.slice(0, 3).map((t, idx) => (
+                                    <div key={t.id} className="relative bg-white border border-slate-100 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all group overflow-hidden">
+                                        <div className={`absolute top-0 right-0 p-2 opacity-5 group-hover:opacity-10 transition-opacity`}>
+                                            <Trophy className="w-12 h-12" />
+                                        </div>
+                                        <div className="flex items-center space-x-3 mb-3">
+                                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-white shadow-sm ${idx === 0 ? 'bg-amber-400' : idx === 1 ? 'bg-slate-400' : 'bg-amber-700'}`}>
+                                                #{idx + 1}
+                                            </div>
+                                            <div className="font-bold text-slate-900 truncate">{t.name}</div>
+                                        </div>
+                                        <div className="flex justify-between items-end">
+                                            <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Current Score</div>
+                                            <div className="text-xl font-black text-slate-900">{t.score || 0}</div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
 
                         {/* Broadcast Announcement */}
                         <div className="glass-card rounded-3xl p-6 sm:p-8 border border-white/60">
                             <div className="flex items-center space-x-3 mb-6">
-                                {/* Premium Icon with Glow */}
                                 <div className="relative">
                                     <div className="absolute inset-0 bg-gradient-to-br from-rose-500 to-orange-500 rounded-xl blur-md opacity-50"></div>
                                     <div className="relative p-2.5 rounded-xl bg-gradient-to-br from-rose-500 to-orange-500 text-white shadow-lg shadow-rose-500/30">
@@ -1075,6 +1126,70 @@ export const AdminDashboard: React.FC = () => {
                                 })}
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            )}
+
+            {/* Assistance Tab */}
+            {activeTab === 'help' && (
+                <div className="space-y-6">
+                    <div className="glass-card p-6 sm:p-8 rounded-3xl border border-white/60">
+                        <div className="flex items-center space-x-3">
+                            <div className="relative">
+                                <div className="absolute inset-0 bg-red-500 rounded-xl blur-md opacity-50"></div>
+                                <div className="relative p-2.5 rounded-xl bg-red-500 text-white shadow-lg">
+                                    <LifeBuoy className="w-5 h-5" />
+                                </div>
+                            </div>
+                            <div>
+                                <h3 className="text-xl font-bold text-slate-900">Assistance Requests</h3>
+                                <p className="text-sm text-slate-500">Teams that need immediate support from mentors or volunteers.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {helpRequests.filter(r => r.status === 'pending').map((request) => (
+                            <div key={request.id} className="glass-card rounded-[2rem] p-6 border-l-4 border-l-red-500 border border-white hover:shadow-xl transition-all group">
+                                <div className="flex justify-between items-start mb-4">
+                                    <div className="flex items-center space-x-3">
+                                        <div className="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center font-bold">
+                                            {request.teamName.charAt(0)}
+                                        </div>
+                                        <div>
+                                            <h4 className="text-sm font-bold text-slate-900 group-hover:text-red-600 transition-colors uppercase tracking-tight">{request.teamName}</h4>
+                                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{request.roomNumber} | Table {request.tableNumber}</p>
+                                        </div>
+                                    </div>
+                                    <div className="px-2 py-1 rounded-lg bg-red-50 text-red-600 text-[10px] font-bold uppercase tracking-widest animate-pulse">Pending</div>
+                                </div>
+                                <div className="bg-slate-50 p-4 rounded-xl mb-6 border border-slate-100">
+                                    <p className="text-[11px] text-slate-600 font-medium italic leading-relaxed">"{request.message}"</p>
+                                </div>
+                                <div className="flex flex-col space-y-3">
+                                    <div className="flex justify-between items-center text-[10px]">
+                                        <span className="text-slate-400 font-bold uppercase">Requested</span>
+                                        <span className="text-slate-600 font-mono">{new Date(request.requestedAt).toLocaleTimeString()}</span>
+                                    </div>
+                                    <button
+                                        onClick={() => handleResolveHelp(request.id)}
+                                        className="w-full py-3 bg-white border-2 border-slate-100 hover:border-emerald-500 hover:bg-emerald-50 text-slate-600 hover:text-emerald-700 rounded-xl text-[11px] font-bold uppercase tracking-widest transition-all flex items-center justify-center space-x-2"
+                                    >
+                                        <CheckCircle className="w-4 h-4" />
+                                        <span>Mark as Resolved</span>
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                        {helpRequests.filter(r => r.status === 'pending').length === 0 && (
+                            <div className="md:col-span-2 lg:col-span-3 py-20 text-center glass-card rounded-3xl border border-white/60">
+                                <div className="inline-flex p-6 bg-emerald-50 rounded-full mb-4">
+                                    <CheckCircle className="w-12 h-12 text-emerald-500" />
+                                </div>
+                                <h4 className="text-xl font-bold text-slate-900">No active help requests</h4>
+                                <p className="text-sm text-slate-500 max-w-xs mx-auto mt-2">Everything is smooth! All teams are currently supported or haven't requested help yet.</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}

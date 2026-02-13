@@ -35,7 +35,7 @@ interface LayoutProps {
   title?: string;
 }
 
-export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout, title = "Vignan's Hackify" }) => {
+export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout, title = "VHACK 2.0" }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdown, setProfileDropdown] = useState(false);
@@ -226,7 +226,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout, title 
             <span className="text-xs font-semibold uppercase tracking-widest">Powered by Vignan's Innovation</span>
           </div>
           <p className="text-sm text-slate-500">
-            © {new Date().getFullYear()} Vignan's Hackify. <span className="hidden sm:inline">Built for speed, reliability, and innovation.</span>
+            © {new Date().getFullYear()} VHACK 2.0. <span className="hidden sm:inline">Built for speed, reliability, and innovation.</span>
           </p>
         </div>
       </footer>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { dbService } from '../services/mockDb';
 import { Team, ProblemStatement, Volunteer } from '../types';
 import {
@@ -85,6 +86,25 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onRegister, onBack }
         setIsSubmitting(true);
 
         try {
+            const db = dbService.getDb();
+            const lowerTeamName = teamName.trim().toLowerCase();
+            const lowerEmail = email.trim().toLowerCase();
+
+            const nameExists = db.teams.some(t => t.name.toLowerCase() === lowerTeamName);
+            const emailExists = db.teams.some(t => t.email.toLowerCase() === lowerEmail);
+
+            if (nameExists) {
+                setError('A team with this name already exists.');
+                setIsSubmitting(false);
+                return;
+            }
+
+            if (emailExists) {
+                setError('This email is already registered to a team.');
+                setIsSubmitting(false);
+                return;
+            }
+
             const validMembers = members.filter(m => m.trim());
             const selectedPS = problemStatements.find(p => p.id === selectedProblem);
             const randomVolunteer = volunteers[Math.floor(Math.random() * volunteers.length)];
@@ -99,7 +119,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onRegister, onBack }
                 roomNumber: `R-${Math.floor(Math.random() * 5) + 1}0${Math.floor(Math.random() * 9) + 1}`,
                 tableNumber: `T-${Math.floor(Math.random() * 30) + 1}`,
                 wifiSsid: 'Vignan-Guest',
-                wifiPass: 'Hackify2026!',
+                wifiPass: 'VHACK2K26!',
                 assignedVolunteerId: randomVolunteer?.id || '',
                 isCheckedIn: false,
                 score: 0,
@@ -158,30 +178,59 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onRegister, onBack }
                     <div className="absolute bottom-[-20%] right-[-20%] w-[70%] h-[70%] rounded-full bg-blue-600/20 blur-[120px] animate-pulse" style={{ animationDelay: '1s' }}></div>
                 </div>
 
-                <div className="relative z-10 flex flex-col justify-center items-start p-16 xl:p-20">
-                    <div className="mb-6">
-                        <img
-                            src="/vignan-logo.png"
-                            alt="Vignan Logo"
-                            className="h-20 xl:h-24 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]"
-                        />
-                    </div>
-                    <div className="mb-10 inline-flex items-center space-x-4 bg-gradient-to-r from-white/10 via-white/5 to-white/10 backdrop-blur-2xl px-8 py-4 rounded-2xl border border-white/20">
-                        <div className="relative">
-                            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 rounded-xl blur-md animate-pulse scale-125"></div>
-                            <div className="relative bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 p-3 rounded-xl shadow-lg">
-                                <Zap className="w-7 h-7 text-white" />
+                <div className="relative z-10 flex flex-col justify-center items-center text-center p-16 xl:p-20">
+                    {/* Premium Logo & Branding Section - Centered */}
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9, filter: 'blur(20px)' }}
+                        animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                        className="mb-16 flex flex-col items-center"
+                    >
+                        <h1 className="text-6xl xl:text-[9.5rem] font-black tracking-tighter flex flex-col items-center group cursor-default mb-6 relative">
+                            <motion.span
+                                initial={{ opacity: 0, y: -20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.8, delay: 0.2 }}
+                                className="bg-gradient-to-r from-white via-violet-100 to-indigo-100 bg-clip-text text-transparent drop-shadow-[0_0_50px_rgba(255,255,255,0.4)] group-hover:drop-shadow-[0_0_80px_rgba(139,92,246,0.6)] transition-all duration-1000 uppercase block"
+                            >
+                                VHACK
+                            </motion.span>
+                            <div className="flex items-center gap-8 -mt-6">
+                                <motion.span
+                                    initial={{ opacity: 0, x: -50 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ duration: 0.8, delay: 0.5, type: 'spring' }}
+                                    className="bg-gradient-to-r from-violet-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent font-extrabold"
+                                >
+                                    2.0
+                                </motion.span>
+                                <motion.span
+                                    initial={{ opacity: 0, x: 50 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ duration: 0.8, delay: 0.8, type: 'spring' }}
+                                    className="text-4xl xl:text-6xl bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent font-black tracking-[0.2em]"
+                                >
+                                    2K26
+                                </motion.span>
                             </div>
-                        </div>
-                        <div className="flex flex-col">
-                            <span className="text-2xl xl:text-3xl font-black tracking-tight bg-gradient-to-r from-white via-emerald-200 to-teal-200 bg-clip-text text-transparent">
-                                Join the Hackathon
-                            </span>
-                            <span className="text-sm font-bold tracking-widest uppercase bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
-                                Register Your Team
-                            </span>
-                        </div>
-                    </div>
+                        </h1>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 1, delay: 1 }}
+                            className="flex flex-col items-center gap-4"
+                        >
+                            <div className="h-px w-48 bg-gradient-to-r from-transparent via-white/20 to-transparent mb-2"></div>
+                            <motion.img
+                                whileHover={{ scale: 1.15, rotate: 2 }}
+                                src="/vignan-logo.png"
+                                alt="Vignan Logo"
+                                className="h-16 opacity-90 hover:opacity-100 transition-all duration-500 drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]"
+                            />
+                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.6em]">Vignan University</span>
+                        </motion.div>
+                    </motion.div>
 
                     <h1 className="text-5xl xl:text-6xl font-black tracking-tight text-white mb-6 leading-[1.1]">
                         <span className="block">Build.</span>

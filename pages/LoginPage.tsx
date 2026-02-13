@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { dbService } from '../services/mockDb';
 import { User } from '../types';
 import { Rocket, Lock, Mail, Loader2, ArrowRight, CheckCircle2, Sparkles, Zap, Users, Trophy, Calendar, Star, XCircle, Award } from 'lucide-react';
@@ -68,7 +69,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onShowRegister })
   ];
 
   return (
-    <div className="min-h-screen flex">
+    <div className="h-screen flex overflow-hidden">
       {/* Left Side - Hero Section */}
       <div className="hidden lg:flex w-1/2 relative overflow-hidden">
         {/* Animated Gradient Background */}
@@ -86,75 +87,75 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onShowRegister })
         </div>
 
         {/* Content */}
-        <div className="relative z-10 flex flex-col justify-center items-start p-16 xl:p-20">
-          {/* Premium Hackathon Badge */}
-          <div className="mb-6">
-            <img
-              src="/vignan-logo.png"
-              alt="Vignan Logo"
-              className="h-20 xl:h-24 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]"
-            />
-          </div>
-          <div className="mb-10 inline-flex items-center space-x-4 bg-gradient-to-r from-white/10 via-white/5 to-white/10 backdrop-blur-2xl px-8 py-4 rounded-2xl border border-white/20 shadow-2xl shadow-violet-500/20 hover:shadow-violet-500/30 hover:border-white/30 transition-all duration-500 group">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-500 rounded-xl blur-md animate-pulse scale-125"></div>
-              <div className="relative bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-500 p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <Rocket className="w-7 h-7 text-white" />
-              </div>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-2xl xl:text-3xl font-black tracking-tight bg-gradient-to-r from-white via-violet-200 to-purple-200 bg-clip-text text-transparent drop-shadow-lg" style={{ fontFamily: "'Inter', 'Outfit', system-ui, sans-serif" }}>
-                Hackify
+        <div className="relative z-10 flex flex-col justify-center items-center text-center px-10 py-10 h-full">
+          {/* VHACK 2.0 Branding */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, filter: 'blur(20px)' }}
+            animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            className="mb-8 flex flex-col items-center"
+          >
+            {/* VHACK 2.0 — Single Line */}
+            <h1 className="flex items-baseline gap-3 group cursor-default">
+              <span className="text-6xl xl:text-8xl font-black tracking-tighter leading-none uppercase bg-gradient-to-r from-white via-violet-100 to-indigo-100 bg-clip-text text-transparent drop-shadow-[0_0_40px_rgba(255,255,255,0.3)] group-hover:drop-shadow-[0_0_60px_rgba(139,92,246,0.5)] transition-all duration-1000">
+                VHACK
               </span>
-              <span className="text-sm font-bold tracking-widest uppercase bg-gradient-to-r from-violet-400 via-purple-300 to-blue-400 bg-clip-text text-transparent">
-                2026 Edition
-              </span>
-            </div>
-            <div className="flex flex-col items-center space-y-1 ml-2">
-              <div className="h-2.5 w-2.5 rounded-full bg-gradient-to-r from-emerald-400 to-green-400 animate-pulse shadow-lg shadow-emerald-500/50"></div>
-              <span className="text-[10px] font-bold text-emerald-400/80 uppercase tracking-widest">Live</span>
-            </div>
-          </div>
+              <motion.span
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.5, type: 'spring' }}
+                className="text-4xl xl:text-6xl font-black bg-gradient-to-r from-violet-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent"
+              >
+                2.0
+              </motion.span>
+            </h1>
 
-          {/* Hero Title */}
-          <h1 className="text-6xl xl:text-7xl font-black tracking-tight text-white mb-6 leading-[1.1]">
-            <span className="block">Innovate.</span>
-            <span className="block">Build.</span>
-            <span className="block bg-gradient-to-r from-violet-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">
+            {/* 2K26 — Below */}
+            <motion.span
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.8, type: 'spring' }}
+              className="text-3xl xl:text-5xl font-black tracking-[0.3em] bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent mt-1"
+            >
+              2K26
+            </motion.span>
+          </motion.div>
+
+          {/* Tagline */}
+          <h2 className="text-3xl xl:text-4xl font-black tracking-tight text-white mb-3 leading-[1.1]">
+            <span>Innovate. </span>
+            <span>Build. </span>
+            <span className="bg-gradient-to-r from-violet-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">
               Transform.
             </span>
-          </h1>
+          </h2>
 
           {/* Description */}
-          <p className="text-lg xl:text-xl text-slate-400 max-w-md mb-12 leading-relaxed font-medium">
-            Welcome to the official management portal. Track your progress, connect with mentors, and shape the future of innovation.
+          <p className="text-sm xl:text-base text-slate-400 max-w-sm mb-8 leading-relaxed font-medium">
+            Official management portal — track progress, connect with mentors, and shape the future of innovation.
           </p>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-3 gap-4 w-full max-w-lg">
+          <div className="grid grid-cols-3 gap-3 w-full max-w-sm">
             {stats.map((stat, index) => (
               <div
                 key={index}
-                className="group bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-all duration-500 hover:scale-105 hover:border-white/20 cursor-pointer"
+                className="group bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-3 hover:bg-white/10 transition-all duration-500 hover:scale-105 hover:border-white/20 cursor-pointer"
               >
-                {/* Premium Icon with Glow */}
-                <div className="relative mb-3">
-                  <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} rounded-xl blur-lg opacity-50 group-hover:opacity-80 transition-opacity duration-500`}></div>
-                  <div className={`relative inline-flex p-3 rounded-xl bg-gradient-to-br ${stat.color} shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                    <stat.icon className="w-5 h-5 text-white" />
-                  </div>
+                <div className={`inline-flex p-2 rounded-lg bg-gradient-to-br ${stat.color} shadow-lg mb-2`}>
+                  <stat.icon className="w-4 h-4 text-white" />
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-1 group-hover:text-violet-200 transition-colors">{stat.value}</h3>
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest group-hover:text-slate-400 transition-colors">{stat.label}</p>
+                <h3 className="text-lg font-bold text-white mb-0.5">{stat.value}</h3>
+                <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest">{stat.label}</p>
               </div>
             ))}
           </div>
 
           {/* Bottom Decoration */}
-          <div className="absolute bottom-12 left-16 right-16 flex items-center space-x-4 text-slate-600">
+          <div className="absolute bottom-6 left-10 right-10 flex items-center space-x-3 text-slate-600">
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent"></div>
-            <Calendar className="w-4 h-4" />
-            <span className="text-xs font-semibold uppercase tracking-widest">February 2026</span>
+            <Calendar className="w-3.5 h-3.5" />
+            <span className="text-[10px] font-semibold uppercase tracking-widest">February 2026</span>
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent"></div>
           </div>
         </div>
@@ -168,31 +169,25 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onShowRegister })
           backgroundSize: '40px 40px'
         }}></div>
 
-        <div className="relative w-full max-w-md space-y-8">
-          {/* Mobile Logo */}
-          <div className="text-center lg:hidden mb-8">
-            <div className="inline-flex items-center justify-center mb-4">
-              <img
-                src="/vignan-logo.png"
-                alt="Vignan Logo"
-                className="h-16 drop-shadow-lg"
-              />
-            </div>
-            <h2 className="text-xl font-bold text-slate-900">Vignan's Hackify</h2>
+        <div className="relative w-full max-w-md space-y-6">
+          {/* Mobile Branding */}
+          <div className="text-center lg:hidden">
+            <h2 className="text-2xl font-black text-slate-900">VHACK <span className="text-violet-600">2.0</span></h2>
+            <span className="text-[10px] font-bold text-slate-400 tracking-[0.3em] uppercase">2K26</span>
           </div>
 
           {/* Header */}
           <div className="text-center lg:text-left">
-            <h2 className="text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight mb-3">
+            <h2 className="text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight mb-2">
               Welcome Back
             </h2>
-            <p className="text-slate-500 font-medium">
-              Sign in to access your dashboard and manage your hackathon journey.
+            <p className="text-sm text-slate-500 font-medium">
+              Sign in to access your dashboard.
             </p>
           </div>
 
           {/* Form */}
-          <form className="space-y-5" onSubmit={handleSubmit}>
+          <form className="space-y-4" onSubmit={handleSubmit}>
             {/* Email Field */}
             <div className="relative group">
               <div className={`absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors duration-200 ${focusedField === 'email' ? 'text-violet-600' : 'text-slate-400'}`}>
@@ -269,13 +264,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onShowRegister })
           </div>
 
           {/* Demo Access Cards - Premium Icons */}
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-4 gap-2">
             {demoAccounts.map((account, index) => (
               <button
                 key={index}
                 onClick={() => handleQuickLogin(account.email, account.password)}
                 disabled={isLoading}
-                className={`group relative p-4 rounded-2xl border-2 transition-all duration-500 hover:scale-[1.03] active:scale-[0.98] disabled:opacity-50 overflow-hidden ${account.color === 'violet'
+                className={`group relative p-3 rounded-xl border-2 transition-all duration-500 hover:scale-[1.03] active:scale-[0.98] disabled:opacity-50 overflow-hidden ${account.color === 'violet'
                   ? 'border-violet-200 bg-violet-50/50 hover:bg-violet-100/80 hover:border-violet-400'
                   : account.color === 'emerald'
                     ? 'border-emerald-200 bg-emerald-50/50 hover:bg-emerald-100/80 hover:border-emerald-400'
@@ -307,7 +302,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onShowRegister })
 
           {/* Footer */}
           <p className="text-center text-sm text-slate-400 font-medium">
-            © 2026 Vignan's Hackify. Built for innovators.
+            © 2026 VHACK 2.0. Built for innovators.
           </p>
         </div>
       </div>

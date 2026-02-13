@@ -1,7 +1,7 @@
 {
-    "name": "Vignan's Hackify 2026",
-    "short_name": "Hackify",
-    "description": "Vignan's Hackify 2026 - Official Management Portal for teams, volunteers, judges, and administrators. Build. Innovate. Transform.",
+    "name": "VHACK 2.0 2K26",
+    "short_name": "VHACK 2.0",
+    "description": "VHACK 2.0 2K26 - Official Hackathon Management Portal by Vignan University. Innovate. Build. Transform.",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#0f172a",
@@ -70,7 +70,7 @@
             "sizes": "1280x720",
             "type": "image/png",
             "form_factor": "wide",
-            "label": "Hackify Dashboard"
+            "label": "VHACK Dashboard"
         },
         {
             "src": "/screenshots/mobile.png",

@@ -1,7 +1,7 @@
-// Vignan's Hackify 2026 - Service Worker
-const CACHE_NAME = 'hackify-v1.0.0';
-const STATIC_CACHE = 'hackify-static-v1';
-const DYNAMIC_CACHE = 'hackify-dynamic-v1';
+// VHACK 2.0 2K26 - Service Worker
+const CACHE_NAME = 'vhack-v2.0.0';
+const STATIC_CACHE = 'vhack-static-v1';
+const DYNAMIC_CACHE = 'vhack-dynamic-v1';
 
 // Assets to cache on install
 const STATIC_ASSETS = [
@@ -122,7 +122,7 @@ self.addEventListener('fetch', (event) => {
 // Handle push notifications (for future use)
 self.addEventListener('push', (event) => {
     const options = {
-        body: event.data?.text() || 'New update from Hackify!',
+        body: event.data?.text() || 'New update from VHACK 2.0!',
         icon: '/icons/icon-192x192.png',
         badge: '/icons/icon-72x72.png',
         vibrate: [200, 100, 200],
@@ -134,7 +134,7 @@ self.addEventListener('push', (event) => {
     };
 
     event.waitUntil(
-        self.registration.showNotification("Vignan's Hackify 2026", options)
+        self.registration.showNotification("VHACK 2.0 2K26", options)
     );
 });
 

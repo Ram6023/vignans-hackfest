@@ -113,115 +113,140 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
 
     return (
         <div className="min-h-screen bg-[#0a0a0f] text-white overflow-x-hidden">
+            {/* Modern Navbar */}
+            <nav className={`fixed top-0 left-0 right-0 z-50 px-8 py-4 transition-all duration-500 ${isScrolled
+                ? 'backdrop-blur-xl bg-[#0a0a0f]/80 border-b border-white/10 shadow-2xl shadow-black/50'
+                : 'bg-transparent border-b border-transparent'
+                }`}>
+                <div className="max-w-7xl mx-auto flex items-center justify-between">
+                    {/* Compact Logo on Left */}
+                    <div className="flex items-center gap-3 group cursor-pointer">
+                        <div className="flex flex-col">
+                            <span className="text-sm font-black tracking-tighter uppercase leading-none">VHACK <span className="text-violet-400">2.0</span></span>
+                            <span className="text-[8px] font-bold text-slate-500 tracking-[0.3em] uppercase">2K26</span>
+                        </div>
+                    </div>
+
+                    {/* Nav Links + Login */}
+                    <div className="flex items-center gap-6 md:gap-12">
+                        <div className="hidden md:flex items-center space-x-8">
+                            <a href="#tracks" className="text-sm font-bold text-white/40 hover:text-white transition-colors uppercase tracking-widest">Tracks</a>
+                            <a href="#perks" className="text-sm font-bold text-white/40 hover:text-white transition-colors uppercase tracking-widest">Perks</a>
+                            <a href="#schedule" className="text-sm font-bold text-white/40 hover:text-white transition-colors uppercase tracking-widest">Schedule</a>
+                        </div>
+
+                        <button
+                            onClick={onGetStarted}
+                            className="relative group px-8 py-3 rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 shadow-xl shadow-purple-500/20"
+                        >
+                            <div className="absolute inset-0 bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 transition-all duration-500 group-hover:hue-rotate-15"></div>
+                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 bg-[radial-gradient(circle_at_center,_white_0%,_transparent_100%)] blur-2xl scale-150 border-white/20 border"></div>
+                            <div className="relative flex items-center gap-2">
+                                <span className="text-sm font-black uppercase tracking-widest">Login</span>
+                                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
             {/* Hero Section */}
-            <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+            <section className="relative min-h-screen flex flex-col items-center justify-center pt-20 px-8">
                 {/* Modern Gradient Background */}
-                <div className="absolute inset-0">
+                <div className="absolute inset-0 pointer-events-none">
                     <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-purple-600/20 blur-[120px] animate-pulse"></div>
                     <div className="absolute bottom-[-20%] right-[-10%] w-[45%] h-[45%] rounded-full bg-indigo-600/20 blur-[120px] animate-pulse" style={{ animationDelay: '1s' }}></div>
                     <div className="absolute top-[40%] right-[10%] w-[30%] h-[30%] rounded-full bg-fuchsia-500/10 blur-[100px] animate-pulse" style={{ animationDelay: '2s' }}></div>
                 </div>
 
-                {/* Navigation */}
-                <nav className={`fixed top-0 left-0 right-0 z-50 px-8 py-6 transition-all duration-300 ${isScrolled
-                    ? 'backdrop-blur-md bg-[#0a0a0f]/60 border-b border-white/10 shadow-lg shadow-black/20'
-                    : 'bg-transparent border-b border-transparent'
-                    }`}>
-                    <div className="max-w-7xl mx-auto flex items-center justify-end">
-                        <div className="hidden md:flex items-center space-x-12">
-                            <a href="#tracks" className="nav-link-wavy text-lg text-white/60 hover:text-white transition-colors">Tracks</a>
-                            <a href="#perks" className="nav-link-wavy text-lg text-white/60 hover:text-white transition-colors">Perks</a>
-                            <a href="#schedule" className="nav-link-wavy text-lg text-white/60 hover:text-white transition-colors">Schedule</a>
-                        </div>
-                    </div>
-                </nav>
+                <div className="relative z-10 max-w-7xl mx-auto flex flex-col items-center">
+                    {/* VHACK 2.0 Branding */}
+                    <div className="flex flex-col items-center justify-center text-center">
+                        {/* VHACK 2.0 — Single Line */}
+                        <h1 className="flex items-baseline gap-4 md:gap-8 group cursor-default">
+                            <span className="text-[14vw] md:text-[10rem] lg:text-[14rem] font-black tracking-tighter leading-none uppercase bg-gradient-to-r from-white via-violet-100 to-indigo-100 bg-clip-text text-transparent drop-shadow-[0_0_50px_rgba(255,255,255,0.4)] group-hover:drop-shadow-[0_0_80px_rgba(139,92,246,0.6)] transition-all duration-1000">
+                                VHACK
+                            </span>
+                            <span className="text-[8vw] md:text-[5rem] lg:text-[7rem] font-black bg-gradient-to-r from-violet-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent">
+                                2.0
+                            </span>
+                        </h1>
 
-                {/* Hero Content - Split Layout */}
-                <div className="relative z-10 max-w-7xl mx-auto px-8 pt-32">
+                        {/* 2K26 — Below */}
+                        <span className="text-[6vw] md:text-[4rem] lg:text-[5rem] font-black tracking-[0.3em] bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent mt-2">
+                            2K26
+                        </span>
 
-                    {/* Main Header Row: Logo | Divider | Title | Login Button */}
-                    <div className="flex flex-col lg:flex-row items-center justify-between gap-8 mb-8">
-
-                        {/* Left Side - Logo + Title */}
-                        <div className="animate-fade-in-up flex items-center gap-6 sm:gap-10">
-                            {/* Logo on the left */}
-                            <img
-                                src="/vignan-logo.png"
-                                alt="Vignan Logo"
-                                className="h-24 md:h-36 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] transition-transform hover:scale-105 duration-500"
-                            />
-
-                            {/* Vertical Divider Line */}
-                            <div className="h-20 md:h-28 w-px bg-white/20"></div>
-
-                            {/* Title - slightly to the right */}
-                            <div className="flex flex-col text-left pl-2">
-                                <h1 className="hackathon-title text-5xl md:text-7xl lg:text-8xl mb-0 leading-[1.1]">
-                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-100 to-indigo-100">
-                                        HACKIFY
-                                    </span>
-                                </h1>
-                                <p className="hackathon-title text-4xl md:text-6xl lg:text-7xl text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-violet-400 to-indigo-400 -mt-2">
-                                    2026
-                                </p>
+                        {/* Logos Row */}
+                        <div className="flex flex-col items-center gap-4 mt-8">
+                            <span className="text-[10px] md:text-xs font-bold text-white/40 uppercase tracking-[0.4em]">In Association With</span>
+                            <div className="h-px w-64 bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+                            <div className="flex items-center gap-6 md:gap-10">
+                                <img
+                                    src="/vignan-logo.png"
+                                    alt="Vignan Logo"
+                                    className="h-16 md:h-24 drop-shadow-[0_0_20px_rgba(255,255,255,0.2)] brightness-125 hover:scale-110 transition-transform duration-500"
+                                />
+                                <div className="w-px h-10 bg-white/15"></div>
+                                <div className="h-16 md:h-24 w-32 md:w-48 rounded-lg overflow-hidden flex items-center justify-center hover:scale-110 transition-transform duration-500">
+                                    <img
+                                        src="/nexus-logo.jpeg"
+                                        alt="Nexus Logo"
+                                        className="w-full h-full object-cover scale-150 mix-blend-screen"
+                                    />
+                                </div>
+                                <div className="w-px h-10 bg-white/15"></div>
+                                <img
+                                    src="/aidx-logo.jpeg"
+                                    alt="AID-X Logo"
+                                    className="h-16 md:h-24 rounded-lg mix-blend-screen hover:scale-110 transition-transform duration-500"
+                                />
                             </div>
                         </div>
-
-                        {/* Right Side - Login Only */}
-                        <div className="flex-shrink-0 animate-fade-in-left" style={{ animationDelay: '0.3s' }}>
-                            <button
-                                onClick={onGetStarted}
-                                className="group relative inline-flex items-center justify-center gap-4 px-16 py-6 text-xl font-semibold rounded-full overflow-hidden transition-all duration-500 hover:-translate-y-1 hover:shadow-purple-500/30"
-                                style={{
-                                    background: 'linear-gradient(135deg, #7c3aed 0%, #9333ea 50%, #4f46e5 100%)',
-                                    boxShadow: '0 25px 50px -12px rgba(124, 58, 237, 0.4)'
-                                }}
-                            >
-                                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
-                                </div>
-                                <span className="relative z-10">Login</span>
-                                <ArrowRight className="relative z-10 w-6 h-6 group-hover:translate-x-1 transition-transform" />
-                            </button>
-                        </div>
                     </div>
 
-                    {/* Tagline - Centered below header */}
-                    <p className="text-xl md:text-2xl text-white/40 font-medium tracking-wide text-center mb-12">
-                        Build <span className="text-white/70">·</span> Innovate <span className="text-white/70">·</span> Transform
-                    </p>
+                    <FadeInSection delay="300ms">
+                        <p className="text-xl md:text-2xl text-white/30 font-medium tracking-widest text-center mt-12 max-w-2xl uppercase">
+                            Innovate <span className="text-white/60">·</span> Build <span className="text-white/60">·</span> Transform
+                        </p>
+                    </FadeInSection>
 
-                    {/* Countdown - Bigger */}
-                    <FadeInSection delay="200ms">
-                        <div className="flex items-center justify-center gap-8 mb-16">
+                    {/* Countdown */}
+                    <FadeInSection delay="500ms">
+                        <div className="flex items-center justify-center gap-4 md:gap-8 mt-16">
                             {[
                                 { value: timeLeft.days, label: 'Days' },
                                 { value: timeLeft.hours, label: 'Hours' },
                                 { value: timeLeft.minutes, label: 'Min' },
                                 { value: timeLeft.seconds, label: 'Sec' },
                             ].map((item, index) => (
-                                <div key={index} className="text-center">
-                                    <div className="w-24 h-24 md:w-28 md:h-28 bg-white/5 backdrop-blur rounded-3xl flex items-center justify-center mb-3 border border-white/10 shadow-lg shadow-purple-900/10 transform transition-transform hover:scale-105">
-                                        <span className="text-4xl md:text-5xl font-bold text-white tabular-nums">
+                                <div key={index} className="text-center group">
+                                    <div className="w-20 h-20 md:w-32 md:h-32 bg-white/5 backdrop-blur-2xl rounded-[1.5rem] md:rounded-[2.5rem] flex flex-col items-center justify-center mb-4 border border-white/10 shadow-2xl transition-all duration-500 group-hover:bg-white/10 group-hover:border-white/20 group-hover:-translate-y-2">
+                                        <span className="text-3xl md:text-6xl font-black text-white tabular-nums leading-none">
                                             {String(item.value).padStart(2, '0')}
                                         </span>
                                     </div>
-                                    <span className="text-sm font-medium text-white/30 uppercase tracking-wider">{item.label}</span>
+                                    <span className="text-[10px] md:text-xs font-black text-white/20 uppercase tracking-[0.3em] group-hover:text-white/40 transition-colors">{item.label}</span>
                                 </div>
                             ))}
                         </div>
                     </FadeInSection>
+                </div>
+            </section>
 
-                    {/* Stats - Bigger Cards */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
+            {/* Stats Summary Section */}
+            <section className="py-24 px-8 border-t border-white/5 bg-[#0a0a0f]/50">
+                <div className="max-w-7xl mx-auto">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
                         {stats.map((stat, index) => (
                             <FadeInSection key={index} delay={`${index * 100}ms`}>
-                                <div className="group p-8 rounded-3xl bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.06] hover:border-white/10 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/10">
-                                    <div className={`inline-flex p-4 rounded-2xl bg-gradient-to-br ${stat.color} mb-4 transform transition-transform group-hover:scale-110 duration-300`}>
-                                        <stat.icon className="w-6 h-6 text-white" />
+                                <div className="group relative p-10 rounded-[3rem] bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.05] transition-all duration-500 overflow-hidden">
+                                    <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${stat.color} blur-[60px] opacity-10 group-hover:opacity-30 transition-opacity`}></div>
+                                    <div className={`inline-flex p-5 rounded-[1.5rem] bg-gradient-to-br ${stat.color} mb-6 transform transition-transform group-hover:rotate-12 group-hover:scale-110 shadow-xl shadow-purple-900/40`}>
+                                        <stat.icon className="w-8 h-8 text-white" />
                                     </div>
-                                    <h3 className="text-4xl font-bold text-white mb-1">{stat.value}</h3>
-                                    <p className="text-base text-white/40">{stat.label}</p>
+                                    <h3 className="text-5xl font-black text-white mb-2 leading-none">{stat.value}</h3>
+                                    <p className="text-sm font-bold text-white/20 uppercase tracking-widest">{stat.label}</p>
                                 </div>
                             </FadeInSection>
                         ))}
@@ -230,33 +255,26 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             </section>
 
             {/* Tracks Section */}
-            <section id="tracks" className="py-24 px-8 relative">
-                <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0f] via-purple-950/10 to-[#0a0a0f]"></div>
-
-                <div className="max-w-6xl mx-auto relative z-10">
+            <section id="tracks" className="py-32 px-8 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-900/5 to-transparent"></div>
+                <div className="max-w-7xl mx-auto relative z-10">
                     <FadeInSection>
-                        <div className="text-center mb-14">
-                            <span className="inline-block px-5 py-2 bg-purple-500/10 text-purple-400 text-base font-semibold rounded-full mb-5 border border-purple-500/20">TRACKS</span>
-                            <h2 className="text-5xl md:text-6xl font-bold mb-5">Choose Your Path</h2>
-                            <p className="text-xl text-white/40 max-w-2xl mx-auto">Pick a track that excites you. All submissions welcome.</p>
+                        <div className="text-center mb-24">
+                            <span className="inline-block px-8 py-3 bg-purple-500/10 text-purple-400 text-xs font-black rounded-full mb-6 border border-purple-500/20 tracking-[0.5em] uppercase">The Challenges</span>
+                            <h2 className="text-6xl md:text-8xl font-black mb-6 tracking-tighter">Choose Your Track</h2>
+                            <p className="text-xl text-white/30 max-w-2xl mx-auto font-medium">Push the boundaries of what's possible in these core focus areas.</p>
                         </div>
                     </FadeInSection>
 
-                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                         {tracks.map((track, index) => (
-                            <FadeInSection key={index} delay={`${index * 100}ms`}>
-                                <div
-                                    className="group p-8 rounded-3xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.05] hover:border-purple-500/30 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/20 h-full"
-                                >
-                                    <div className={`inline-flex p-4 rounded-2xl bg-gradient-to-br ${track.color === 'purple' ? 'from-purple-500/20 to-indigo-500/20 text-purple-400' :
-                                        track.color === 'violet' ? 'from-violet-500/20 to-fuchsia-500/20 text-violet-400' :
-                                            track.color === 'indigo' ? 'from-indigo-500/20 to-blue-500/20 text-indigo-400' :
-                                                'from-fuchsia-500/20 to-pink-500/20 text-fuchsia-400'
-                                        } mb-5 transform transition-transform group-hover:rotate-6`}>
-                                        <track.icon className="w-7 h-7" />
+                            <FadeInSection key={index} delay={`${index * 150}ms`}>
+                                <div className="group h-full p-10 rounded-[3.5rem] bg-[#0d0d14] border border-white/[0.05] hover:border-purple-500/40 transition-all duration-700 hover:shadow-[0_0_80px_rgba(139,92,246,0.15)] hover:-translate-y-4">
+                                    <div className={`inline-flex p-6 rounded-[2rem] bg-white/[0.03] text-white/40 mb-8 transform transition-all duration-700 group-hover:scale-110 group-hover:rotate-12 group-hover:text-purple-400 group-hover:bg-purple-500/20`}>
+                                        <track.icon className="w-10 h-10" />
                                     </div>
-                                    <h3 className="text-xl font-semibold text-white mb-3 bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent group-hover:to-purple-200 transition-colors">{track.title}</h3>
-                                    <p className="text-base text-white/40 group-hover:text-white/60 transition-colors">{track.description}</p>
+                                    <h3 className="text-2xl font-black text-white mb-4 group-hover:text-purple-100 transition-colors uppercase tracking-tighter">{track.title}</h3>
+                                    <p className="text-lg text-white/30 leading-relaxed group-hover:text-white/50 transition-colors">{track.description}</p>
                                 </div>
                             </FadeInSection>
                         ))}
@@ -265,27 +283,24 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             </section>
 
             {/* Perks Section */}
-            <section id="perks" className="py-24 px-8">
-                <div className="max-w-6xl mx-auto">
+            <section id="perks" className="py-32 px-8 bg-white/[0.01]">
+                <div className="max-w-7xl mx-auto">
                     <FadeInSection>
-                        <div className="text-center mb-14">
-                            <span className="inline-block px-5 py-2 bg-indigo-500/10 text-indigo-400 text-base font-semibold rounded-full mb-5 border border-indigo-500/20">PERKS</span>
-                            <h2 className="text-5xl md:text-6xl font-bold mb-5">What You Get</h2>
-                            <p className="text-xl text-white/40">Everything you need for 24 hours of hacking</p>
+                        <div className="text-center mb-20">
+                            <h2 className="text-5xl md:text-7xl font-black mb-6 tracking-tighter">Event Perks</h2>
+                            <p className="text-xl text-white/30 font-medium tracking-widest uppercase">Fueled for 24 Hours</p>
                         </div>
                     </FadeInSection>
 
-                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                         {perks.map((perk, index) => (
                             <FadeInSection key={index} delay={`${index * 100}ms`}>
-                                <div
-                                    className="text-center p-8 rounded-3xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.05] hover:border-indigo-500/30 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/10 hover:-translate-y-1"
-                                >
-                                    <div className="inline-flex p-4 rounded-2xl bg-indigo-500/10 text-indigo-400 mb-5 transform transition-transform hover:scale-110 duration-300">
-                                        <perk.icon className="w-7 h-7" />
+                                <div className="text-center p-12 rounded-[3.5rem] bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-all duration-500 group">
+                                    <div className="inline-flex p-6 rounded-[2rem] bg-indigo-500/10 text-indigo-400 mb-6 transform transition-all duration-500 group-hover:scale-125 group-hover:-rotate-6">
+                                        <perk.icon className="w-8 h-8" />
                                     </div>
-                                    <h3 className="text-lg font-semibold text-white mb-2">{perk.title}</h3>
-                                    <p className="text-base text-white/40">{perk.description}</p>
+                                    <h3 className="text-xl font-black text-white mb-2 uppercase tracking-tight">{perk.title}</h3>
+                                    <p className="text-base text-white/30 font-medium">{perk.description}</p>
                                 </div>
                             </FadeInSection>
                         ))}
@@ -294,10 +309,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             </section>
 
             {/* Footer */}
-            <footer className="py-12 px-8 border-t border-white/[0.06] bg-[#0a0a0f]">
-                <div className="max-w-6xl mx-auto text-center">
-                    <p className="text-base text-white/30 hover:text-white/50 transition-colors cursor-default">
-                        © 2026 Vignan University · Built with passion
+            <footer className="py-16 px-8 border-t border-white/5 bg-[#0a0a0f]">
+                <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+                    <div className="flex items-center gap-4">
+                        <img src="/vignan-logo.png" alt="Vignan Logo" className="h-10 grayscale opacity-40" />
+                        <span className="text-sm font-black text-white/20 uppercase tracking-[1em]">VHACK 2.0</span>
+                    </div>
+                    <p className="text-sm font-bold text-white/20 uppercase tracking-widest">
+                        © 2026 Vignan University · Built for innovators
                     </p>
                 </div>
             </footer>
